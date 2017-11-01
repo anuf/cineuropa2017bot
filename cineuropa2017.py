@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from abc import ABC, abstractmethod
+#from abc import ABC, abstractmethod
 
 import PyPDF2
 import re
