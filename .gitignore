@@ -1,3 +1,6 @@
 # TelegramBot
 __pycache__/
 cineuropa2017_token.py
+
+# MacOS
+.DS_Store
