@@ -1,0 +1,58 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-02 23:10+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: film.py:20
+msgid "DAY"
+msgstr ""
+
+#: film.py:20
+msgid "PLACE"
+msgstr ""
+
+#: film.py:20
+msgid "TIME"
+msgstr ""
+
+#: film.py:20
+msgid "TITLE"
+msgstr ""
+
+#: film.py:20
+msgid "DIRECTOR"
+msgstr ""
+
+#: film.py:23
+msgid "Title"
+msgstr ""
+
+#: film.py:23
+msgid "Director"
+msgstr ""
+
+#: film.py:23
+msgid "Day"
+msgstr ""
+
+#: film.py:23
+msgid "Time"
+msgstr ""
+
+#: film.py:23
+msgid "Place"
+msgstr ""

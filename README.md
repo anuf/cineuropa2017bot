@@ -23,3 +23,8 @@ On a server running Python execute:
 
 ## Test it!
 There's a Telegram bot called **Cineuropa2017Bot** that's online. You can find it searching through your telegram account.
+
+## Useful links:
+* [How to use gettext](https://pymotw.com/3/gettext/)
+* [Translating with gettext](https://www.icanlocalize.com/site/tutorials/how-to-translate-with-gettext-po-and-pot-files/)
+* [Poedit](https://poedit.net/)

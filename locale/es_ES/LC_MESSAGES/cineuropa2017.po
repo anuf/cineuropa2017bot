@@ -1,0 +1,63 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-02 23:50+0100\n"
+"PO-Revision-Date: 2017-11-02 23:52+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.4\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es_ES\n"
+
+#: cineuropa2017.py:28
+msgid "Shows films from a given day"
+msgstr "Mostrar películas de un día dado"
+
+#: cineuropa2017.py:29
+msgid "Gives you information about the available commands"
+msgstr "Da información acerca de los comandos disponibles"
+
+#: cineuropa2017.py:30
+msgid "Get used to the bot"
+msgstr "Pertenece al bot"
+
+#: cineuropa2017.py:31
+msgid "Shows films for the current day"
+msgstr "Muestra películas de hoy"
+
+#: cineuropa2017.py:32
+msgid "Shows films for tomorrow"
+msgstr "Muestra películas de mañana"
+
+#: cineuropa2017.py:42
+msgid "Howdy!"
+msgstr "¿Cómo estás?"
+
+#: cineuropa2017.py:55
+msgid "Available commands: \n"
+msgstr "Comandos disponibles: \n"
+
+#: cineuropa2017.py:73
+msgid "No sessions today"
+msgstr "No hay sesiones hoy"
+
+#: cineuropa2017.py:75 cineuropa2017.py:93 cineuropa2017.py:110
+msgid "FILM"
+msgstr "PELÍCULA"
+
+#: cineuropa2017.py:91
+msgid "No sessions tomorrow"
+msgstr "No hay sesiones mañana"
+
+#: cineuropa2017.py:112
+msgid "Invalid command"
+msgstr "Comando no válido"
