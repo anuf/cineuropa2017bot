@@ -9,7 +9,7 @@ t = gettext.translation(
 _ = t.gettext
 
 class Film(object):
-    def __init__(self, day='', place='', time='', title='', director='', rate = '', nextSessions = ''):
+    def __init__(self, day='', place='', time='', title='', director='', rate='', nextSessions = ''):
         self.day = day
         self.place = place
         self.time = time
@@ -20,6 +20,9 @@ class Film(object):
 
     def setNextSessions(self, aString):
         self.nextSessions = aString
+
+    def setRate(self, aRate):
+        self.rate = aRate
 
     def show(self):
         return "{0}: {1}\n{2}: {3}\n{4}: {5}\n{6}: {7}\n{8}: {9}\n{10}: {11}\n{12}: {13}".format(
