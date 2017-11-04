@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-02 23:10+0100\n"
+"POT-Creation-Date: 2017-11-04 21:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,42 +17,58 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: film.py:20
+#: ../film.py:29
 msgid "DAY"
 msgstr ""
 
-#: film.py:20
+#: ../film.py:29
 msgid "PLACE"
 msgstr ""
 
-#: film.py:20
+#: ../film.py:29
 msgid "TIME"
 msgstr ""
 
-#: film.py:20
+#: ../film.py:30
 msgid "TITLE"
 msgstr ""
 
-#: film.py:20
+#: ../film.py:30
 msgid "DIRECTOR"
 msgstr ""
 
-#: film.py:23
+#: ../film.py:30
+msgid "RATE"
+msgstr ""
+
+#: ../film.py:31
+msgid "NEXT SESSIONS"
+msgstr ""
+
+#: ../film.py:34
 msgid "Title"
 msgstr ""
 
-#: film.py:23
+#: ../film.py:35
 msgid "Director"
 msgstr ""
 
-#: film.py:23
+#: ../film.py:35
 msgid "Day"
 msgstr ""
 
-#: film.py:23
+#: ../film.py:35
 msgid "Time"
 msgstr ""
 
-#: film.py:23
+#: ../film.py:36
 msgid "Place"
+msgstr ""
+
+#: ../film.py:36
+msgid "Rate"
+msgstr ""
+
+#: ../film.py:36
+msgid "Next sessions"
 msgstr ""

@@ -3,7 +3,7 @@
 import gettext
 
 t = gettext.translation(
-    'cineuropa2017', 'locale',
+    'film', 'locale',
     fallback=True,
 )
 _ = t.gettext
