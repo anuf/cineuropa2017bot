@@ -19,11 +19,14 @@ def cleanContent(pageContent):
     returnList = []
     for elem in pageContent:
         if 'CINEUROPA31' in elem:
-            print("CINE")
+            #print("CINE")
+            pass
         elif len(elem) == 0:
-            print("ZERO")
+            #print("ZERO")
+            pass
         elif elem == ' | PROGRAMA':
-            print("PROG")
+            #print("PROG")
+            pass
         else:
             returnList.append(elem)
 
@@ -39,11 +42,11 @@ def parsePDFprogram():
     pdfFileObj = open('C31.pdf','rb')     #'rb' for read binary mode
     pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
     numPages = pdfReader.numPages
-
     days = ('LUNS', 'MARTES', 'MÉRCORES', 'XOVES','VENRES','SÁBADO', 'DOMINGO')
     places = ('SEDE AFUNDACIÓN','CINEMA NUMAX', 'CGAC','TEATRO PRINCIPAL', 'SALÓN TEATRO', 'MULTICINES COMPOSTELA (SALA 2)')
     pageContent = []
     for iPage in range(7):#range(numPages):
+        print("parsePDFprogram "+str(iPage))
         pageObj = pdfReader.getPage(iPage)
         pageText = pageObj.extractText().split("\n")
         pageContent += pageText
@@ -52,26 +55,26 @@ def parsePDFprogram():
     filmDays = []
     indexDay = []
 
-    print("LEN1 = "+str(len(pageContent)))
+    #print("LEN1 = "+str(len(pageContent)))
     pageContent = cleanContent(pageContent)
-    print("LEN2 = "+str(len(pageContent)))
+    #print("LEN2 = "+str(len(pageContent)))
     for elem in pageContent:
         if elem.split(' ')[0].upper() in days:
             filmDays.append(elem)
             indexDay.append(pageContent.index(elem))
     indexDay.append(len(pageContent))
 
-    print("@"*10)
+    #print("@"*10)
 
     for j in range(len(indexDay)-1):
         aday = pageContent[indexDay[j]:indexDay[j+1]]
         # print(aday)
         # print(len(aday))
         contents = " ".join(aday[1:])
-        print("+"*10)
+        #print("+"*10)
         myday = filmDays[j]
-        print("DAY: "+myday)
-        print("+"*10)
+        #print("DAY: "+myday)
+        #print("+"*10)
         #print(contents)
 
         sor = sorted([contents.find(x) for x in places if contents.find(x) != -1])
@@ -79,11 +82,11 @@ def parsePDFprogram():
         # print(sor)
         for i in range(len(sor)-1):
             aplace = contents[sor[i]:sor[i+1]]
-            print(" --- "+ aplace)
+            #print(" --- "+ aplace)
             for k in places:
                 if aplace.find(k) != -1:
                     myplace = k
-                    print("PL: ",myplace)
+                    #print("PL: ",myplace)
             eventos = aplace.replace(myplace,"").replace("  "," ").strip()
 
             h = re.findall('\d{2}:\d{2}',eventos)
@@ -100,10 +103,21 @@ def parsePDFprogram():
                         ttl.append(fi2)
                     else:
                         name.append(fi2)
-                aFilm = Film(myday, myplace, hora, " ".join(name), " ".join(ttl))
+                aFilm = Film(day = myday, place = myplace, time = hora, title=" ".join(name), director =" ".join(ttl))
                 aFilm.show()
                 total.append(aFilm)
-                print("+"*10)
+                #print("+"*10)
+
+    # Fill next sessions field before saving
+    for t1 in total:
+        nextList = []
+        for t2 in total:
+
+            if t1.title == t2.title and t1.day.split(" ")[1] < t2.day.split(" ")[1]:
+                print("pasa {0} ::: {1}".format(t1.day, t2.day))
+                nextList.append(t2.day)
+
+        t1.setNextSessions(', '.join(nextList))
 
     # Save sessions to file
     with open('films.json', 'w') as outputFile:
@@ -122,4 +136,5 @@ def load_sessions():
 
 def object2film(anObject):
     '''Convert an json object into a Film'''
-    return Film(anObject['day'], anObject['place'], anObject['time'], anObject['title'], anObject['director'])
+    return Film(anObject['day'], anObject['place'], anObject['time'], anObject['title'],
+anObject['director'], anObject['rate'], anObject['next'])
