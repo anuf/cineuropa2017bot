@@ -30,7 +30,8 @@ commands = {  # command description used in the "help" command ordered alphabeti
               'help': _('Gives you information about the available commands'),
               'start': _('Get used to the bot'),
               'today': _('Shows films for the current day'),
-              'tomorrow': _('Shows films for tomorrow')
+              'tomorrow': _('Shows films for tomorrow'),
+              'top': _('List n top rated films')
 }
 
 voteKeyboard = tb.types.InlineKeyboardMarkup()
@@ -136,6 +137,25 @@ def command_day(message):
         listaEventos = [x.toHTML() for x in sessions if day in x.day.split(' ')]
         for ev in listaEventos:
             bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
+    else:
+        bot.send_message(chat_id, _("Invalid command"))
+
+@bot.message_handler(commands=['top'])
+def command_top(message):
+    '''
+    Show n top rated films.
+    '''
+
+    chat_id = message.chat.id
+
+    if len(message.text.split(" ")) > 1:
+        n = message.text.split(" ")[1]
+        sessions = load_sessions()
+        sortedList = sorted(sessions, key = lambda x: x.rate, reverse=True)
+        listaEventos = [x.toHTML() for x in sortedList]
+        for i in range(int(n)):
+            bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), listaEventos[i]), parse_mode='HTML')
+
     else:
         bot.send_message(chat_id, _("Invalid command"))
 bot.polling()

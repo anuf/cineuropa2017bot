@@ -6,7 +6,7 @@ from film import Film
 import json
 import gettext
 from film import Film
-
+import random 
 t = gettext.translation(
     'cineuropa2017', 'locale',
     fallback=True,
@@ -103,7 +103,8 @@ def parsePDFprogram():
                         ttl.append(fi2)
                     else:
                         name.append(fi2)
-                aFilm = Film(day = myday, place = myplace, time = hora, title=" ".join(name), director =" ".join(ttl))
+                aFilm = Film(day = myday, place = myplace, time = hora,
+                title=" ".join(name), director =" ".join(ttl), rate = random.randint(0,10))
                 aFilm.show()
                 total.append(aFilm)
                 #print("+"*10)
@@ -112,9 +113,7 @@ def parsePDFprogram():
     for t1 in total:
         nextList = []
         for t2 in total:
-
             if t1.title == t2.title and t1.day.split(" ")[1] < t2.day.split(" ")[1]:
-                print("pasa {0} ::: {1}".format(t1.day, t2.day))
                 nextList.append(t2.day)
 
         t1.setNextSessions(', '.join(nextList))
