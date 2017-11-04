@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import requests
+from bs4 import BeautifulSoup
+import urllib3
+
 import PyPDF2
 import re
 from film import Film
 import json
 import gettext
 from film import Film
-import random 
+import random
 t = gettext.translation(
     'cineuropa2017', 'locale',
     fallback=True,
@@ -46,7 +50,6 @@ def parsePDFprogram():
     places = ('SEDE AFUNDACIÓN','CINEMA NUMAX', 'CGAC','TEATRO PRINCIPAL', 'SALÓN TEATRO', 'MULTICINES COMPOSTELA (SALA 2)')
     pageContent = []
     for iPage in range(7):#range(numPages):
-        print("parsePDFprogram "+str(iPage))
         pageObj = pdfReader.getPage(iPage)
         pageText = pageObj.extractText().split("\n")
         pageContent += pageText
@@ -104,7 +107,7 @@ def parsePDFprogram():
                     else:
                         name.append(fi2)
                 aFilm = Film(day = myday, place = myplace, time = hora,
-                title=" ".join(name), director =" ".join(ttl), rate = random.randint(0,10))
+                title=" ".join(name), director =" ".join(ttl), rate = random.randint(0,100))
                 aFilm.show()
                 total.append(aFilm)
                 #print("+"*10)
@@ -137,3 +140,66 @@ def object2film(anObject):
     '''Convert an json object into a Film'''
     return Film(anObject['day'], anObject['place'], anObject['time'], anObject['title'],
 anObject['director'], anObject['rate'], anObject['next'])
+
+def parseFromURL(url):
+    print("parseFromURL")
+    response = urllib3.PoolManager().request('GET', url)
+
+    if response.status == 200:
+        print("parseFromURL2")
+        soup = BeautifulSoup(response.data, "lxml")
+        qq = soup.find_all('div', attrs={'class': 'qq'})
+        print("parseFromURL3")
+        for q in qq:
+            print("parseFromURL4")
+            print(qq.find('p').find('a'))
+    else:
+        print("STATUS: "+str(response.status))
+
+# <div class="qq">
+#     <div class="white-panel" style="margin-bottom:10px;">
+#         <a href="ce003007">
+#             <img src="img/posters/300/300-ce003007.jpg?1509833498" class="img-thumbnail img-responsive" style="width:100%;" alt="">
+#         </a>
+#     </div>
+#     <p style="line-height:1em;">
+#         <small>
+#             <strong>
+#                 <a href="ce003007">A FONDO: ENTREVISTA CON MARÍA CASARES</a>
+#             </strong> (1981)<br>— Entrevista realizada por Joaquín Soler Serrano
+#         </small>
+#     </p>
+#     <div class="clearfix"></div>
+# </div>
+#
+# <div class="qq">
+#     <div class="white-panel" style="margin-bottom:10px;">
+#         <a href="ce003004">
+#             <img src="img/posters/300/300-ce003004.jpg?1509833498" class="img-thumbnail img-responsive" style="width:100%;" alt="">
+#         </a>
+#     </div>
+#     <p style="line-height:1em;">
+#         <small>
+#             <strong>
+#                 <a href="ce003004">A LA SOMBRA DE MORET</a>
+#             </strong> (2015)<br>— Antonio Labajo Altamirano
+#         </small>
+#     </p>
+#     <div class="clearfix"></div>
+# </div>
+#
+# <div class="qq">
+#     <div class="white-panel" style="margin-bottom:10px;">
+#         <a href="http://www.imdb.com/title/tt0075622">
+#             <img src="img/posters/300/300-0075622.jpg?1509833498" class="img-thumbnail img-responsive" style="width:100%;" alt="">
+#         </a>
+#     </div>
+#     <p style="line-height:1em;">
+#         <small>
+#             <strong>
+#                 <a href="http://www.imdb.com/title/tt0075622">ABIGAIL'S PARTY</a>
+#             </strong> (1977)<br>— Mike Leigh
+#         </small>
+#     </p>
+#     <div class="clearfix"></div>
+# </div>

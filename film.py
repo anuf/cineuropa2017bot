@@ -35,6 +35,9 @@ class Film(object):
     _("Director"), self.director, _("Day"), self.day,_("Time"), self.time,
     _("Place"), self.place, _("Rate"), self.rate, _("Next sessions"), self.nextSessions)
 
+    def toTopListHTML(self):
+        return "<b>{0}:</b> {1}\n".format(self.rate, self.title)
+
     def toDict(self):
         return {"day":self.day, "place":self.place, "time":self.time, "title": self.title,
     "director": self.director, "rate": self.rate, "next": self.nextSessions}

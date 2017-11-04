@@ -4,3 +4,7 @@ cineuropa2017_token.py
 
 # MacOS
 .DS_Store
+
+# temporal files for development
+cineuropa2015.txt
+cineuropa2016.txt

@@ -13,9 +13,10 @@ import time
 import datetime
 import json
 import os
+import locale
+from cineuropa2017_utils import parsePDFprogram, load_sessions, parseFromURL
 
-from cineuropa2017_utils import parsePDFprogram, load_sessions
-
+# parseFromURL("http://www.cineuropa.gal/2016")
 
 t = gettext.translation(
     'cineuropa2017', 'locale',
@@ -25,14 +26,36 @@ _ = t.gettext
 
 bot = tb.TeleBot(TOKEN)
 
-commands = {  # command description used in the "help" command ordered alphabetically
-              #'day n': _('Shows films from a given day'),
-              'help': _('Gives you information about the available commands'),
-              'start': _('Get used to the bot'),
-              'today': _('Shows films for the current day'),
-              'tomorrow': _('Shows films for tomorrow'),
-              'top': _('List n top rated films')
-}
+if locale.getlocale()[0] == 'es_ES':
+    commands = {  # command description used in the "help" command ordered alphabetically
+                  #'day n': _('Shows films from a given day'),
+                  'ayuda': _('Gives you information about the available commands'),
+                  'inicio': _('Get used to the bot'),
+                  'hoy': _('Shows films for the current day'),
+                  'mañana': _('Shows films for tomorrow'),
+                  'mejores': _('Lists n top rated films'),
+                  'mejores10': _('Lists top 10 rated films')
+    }
+elif locale.getlocale()[0] == 'gl_ES':
+    commands = {  # command description used in the "help" command ordered alphabetically
+                  #'day n': _('Shows films from a given day'),
+                  'axuda': _('Gives you information about the available commands'),
+                  'inicio': _('Get used to the bot'),
+                  'hoxe': _('Shows films for the current day'),
+                  'mañá': _('Shows films for tomorrow'),
+                  'mellores': _('Lists n top rated films'),
+                  'mellores10': _('Lists top 10 rated films')
+    }
+else:
+    commands = {  # command description used in the "help" command ordered alphabetically
+                  #'day n': _('Shows films from a given day'),
+                  'help': _('Gives you information about the available commands'),
+                  'start': _('Get used to the bot'),
+                  'today': _('Shows films for the current day'),
+                  'tomorrow': _('Shows films for tomorrow'),
+                  'top': _('Lists n top rated films'),
+                  'top10': _('Lists top 10 rated films')
+    }
 
 voteKeyboard = tb.types.InlineKeyboardMarkup()
 voteKeyboard.add(tb.types.InlineKeyboardButton("0",callback_data = "0"),
@@ -47,6 +70,15 @@ voteKeyboard.add(tb.types.InlineKeyboardButton("0",callback_data = "0"),
     tb.types.InlineKeyboardButton("9",callback_data = "9"),
     tb.types.InlineKeyboardButton("10",callback_data = "10"))
 
+markup = tb.types.ReplyKeyboardMarkup(row_width=2)
+itembtn1 = tb.types.KeyboardButton(_('/start'))
+itembtn2 = tb.types.KeyboardButton(_('/help'))
+itembtn3 = tb.types.KeyboardButton(_('/today'))
+itembtn4 = tb.types.KeyboardButton(_('/tomorrow'))
+itembtn5 = tb.types.KeyboardButton(_('/top10'))
+
+markup.add(itembtn1, itembtn2, itembtn3, itembtn4, itembtn5)
+
 #proxy_url = "http://proxy.server:3128"
 #urllib3.ProxyManager(proxy_url=proxy_url, num_pools=3, maxsize=10, retries=False, timeout=30)
 
@@ -59,7 +91,7 @@ def  test_callback(call):
 
     # bot.edit_message_text(text="Selected option: {}".format(call.data))
 # start
-@bot.message_handler(commands=['start'])
+@bot.message_handler(commands=['start','inicio'])
 def send_welcome(message):
     '''This handlert shows a welcome message.'''
     welcome_message = "{0} {1}. {2}".format(_("Hello"),message.from_user.first_name,_("Howdy!"))
@@ -73,7 +105,7 @@ def send_welcome(message):
     bot.reply_to(message, welcome_message)
 
 # help
-@bot.message_handler(commands=['help'])
+@bot.message_handler(commands=['help','axuda','ayuda'])
 def command_help(message):
     '''
     Display the commands and what are they intended for.
@@ -83,13 +115,15 @@ def command_help(message):
     for key in commands:  # generate help text out of the commands dictionary defined at the top
         help_text += "/" + key + ": "
         help_text += commands[key] + "\n"
-    bot.send_message(chat_id, help_text,reply_markup=voteKeyboard) # send the generated help page
+    #bot.send_message(chat_id, help_text,reply_markup=voteKeyboard) # send the generated help page
+    bot.send_message(chat_id, help_text, reply_markup=markup)
 
 @bot.inline_handler(lambda query: len(query.query) > 0)
 def query_text(query):
     print(query)
+
 # today
-@bot.message_handler(commands=['today'])
+@bot.message_handler(commands=['today','hoy','hoxe'])
 def command_today(message):
     '''
     Show today's films.
@@ -105,7 +139,7 @@ def command_today(message):
         bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
 
 # tomorrow
-@bot.message_handler(commands=['tomorrow'])
+@bot.message_handler(commands=['tomorrow','mañana','mañá'])
 def command_tomorrow(message):
     '''
     Show tomorrow's films.
@@ -123,7 +157,7 @@ def command_tomorrow(message):
         bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
 
 # any day
-@bot.message_handler(commands=['day'])
+@bot.message_handler(commands=['day','día'])
 def command_day(message):
     '''
     Show films of a given day (numeric).
@@ -140,7 +174,7 @@ def command_day(message):
     else:
         bot.send_message(chat_id, _("Invalid command"))
 
-@bot.message_handler(commands=['top'])
+@bot.message_handler(commands=['top','mejores','mellores'])
 def command_top(message):
     '''
     Show n top rated films.
@@ -152,9 +186,31 @@ def command_top(message):
         n = message.text.split(" ")[1]
         sessions = load_sessions()
         sortedList = sorted(sessions, key = lambda x: x.rate, reverse=True)
-        listaEventos = [x.toHTML() for x in sortedList]
+        listaEventos = [x.toTopListHTML() for x in sortedList]
+        returnMessage = "********** {0} **********\n".format(_('TOP'))
         for i in range(int(n)):
-            bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), listaEventos[i]), parse_mode='HTML')
+            returnMessage += "{0}".format(listaEventos[i])
+        bot.send_message(chat_id, returnMessage, parse_mode='HTML')
+
+    else:
+        bot.send_message(chat_id, _("Invalid command"))
+
+@bot.message_handler(commands=['top10','mejores10','mellores10'])
+def command_top(message):
+    '''
+    Show top 10 rated films.
+    '''
+
+    chat_id = message.chat.id
+
+    if len(message.text.split(" ")) == 1:
+        sessions = load_sessions()
+        sortedList = sorted(sessions, key = lambda x: x.rate, reverse=True)
+        listaEventos = [x.toTopListHTML() for x in sortedList]
+        returnMessage = "********** {0} **********\n".format(_('TOP 10'))
+        for i in range(10):
+            returnMessage += "{0}".format(listaEventos[i])
+        bot.send_message(chat_id, returnMessage, parse_mode='HTML')
 
     else:
         bot.send_message(chat_id, _("Invalid command"))
