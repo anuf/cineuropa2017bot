@@ -83,8 +83,9 @@ markup.add(itembtn1, itembtn2, itembtn3, itembtn4, itembtn5)
 #urllib3.ProxyManager(proxy_url=proxy_url, num_pools=3, maxsize=10, retries=False, timeout=30)
 
 @bot.callback_query_handler(func=lambda call: True)
-def  test_callback(call):
-    print(call)
+def test_callback(call):
+    #print(call)
+    print("FUNCTION: {0} : USER: {1}".format('test_callback',call.from_user.username))
     thanksMessage = _("Congratulations {0}!").format(call.from_user.first_name) \
     +". "+_("You gave a {0} to the film").format(call.data)
     bot.send_message(call.message.chat.id, thanksMessage) # send the generated help page
@@ -94,6 +95,8 @@ def  test_callback(call):
 @bot.message_handler(commands=['start','inicio'])
 def send_welcome(message):
     '''This handlert shows a welcome message.'''
+    print("FUNCTION: {0} : USER: {1}".format('send_welcome',message.from_user.username))
+
     welcome_message = "{0} {1}. {2}".format(_("Hello"),message.from_user.first_name,_("Howdy!"))
     # Parsed PDF to JSON file
     if not os.path.isfile("films.json"):
@@ -110,6 +113,8 @@ def command_help(message):
     '''
     Display the commands and what are they intended for.
     '''
+    print("FUNCTION: {0} : USER: {1}".format('command_help',message.from_user.username))
+
     chat_id = message.chat.id
     help_text = _("Available commands: \n")
     for key in commands:  # generate help text out of the commands dictionary defined at the top
@@ -128,6 +133,7 @@ def command_today(message):
     '''
     Show today's films.
     '''
+    print("FUNCTION: {0} : USER: {1}".format('command_today',message.from_user.username))
 
     chat_id = message.chat.id
     day = datetime.date.today().day
@@ -144,6 +150,7 @@ def command_tomorrow(message):
     '''
     Show tomorrow's films.
     '''
+    print("FUNCTION: {0} : USER: {1}".format('command_tomorrow',message.from_user.username))
 
     chat_id = message.chat.id
     tomorrow = datetime.date.today()+datetime.timedelta(days=1)
@@ -162,6 +169,7 @@ def command_day(message):
     '''
     Show films of a given day (numeric).
     '''
+    print("FUNCTION: {0} : USER: {1}".format('command_day',message.from_user.username))
 
     chat_id = message.chat.id
 
@@ -179,6 +187,7 @@ def command_top(message):
     '''
     Show n top rated films.
     '''
+    print("FUNCTION: {0} : USER: {1}".format('command_top',message.from_user.username))
 
     chat_id = message.chat.id
 
@@ -196,10 +205,11 @@ def command_top(message):
         bot.send_message(chat_id, _("Invalid command"))
 
 @bot.message_handler(commands=['top10','mejores10','mellores10'])
-def command_top(message):
+def command_top10(message):
     '''
     Show top 10 rated films.
     '''
+    print("FUNCTION: {0} : USER: {1}".format('command_top10',message.from_user.username))
 
     chat_id = message.chat.id
 
@@ -214,4 +224,5 @@ def command_top(message):
 
     else:
         bot.send_message(chat_id, _("Invalid command"))
+
 bot.polling()
