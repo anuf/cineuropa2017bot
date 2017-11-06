@@ -11,6 +11,9 @@ import json
 import gettext
 from film import Film
 import random
+from cineuropa2017_objects import FilmObject, SessionObject
+import hashlib
+
 t = gettext.translation(
     'cineuropa2017', 'locale',
     fallback=True,
@@ -138,8 +141,9 @@ def load_sessions():
 
 def object2film(anObject):
     '''Convert an json object into a Film'''
-    return Film(anObject['day'], anObject['place'], anObject['time'], anObject['title'],
-anObject['director'], anObject['rate'], anObject['next'])
+    return Film(anObject['day'], anObject['place'], anObject['time'],
+        anObject['title'], anObject['director'], anObject['rate'],
+        anObject['next'])
 
 def parseFromURL(url):
     print("parseFromURL")

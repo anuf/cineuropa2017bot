@@ -14,7 +14,9 @@ import datetime
 import json
 import os
 import locale
-from cineuropa2017_utils import parsePDFprogram, load_sessions, parseFromURL
+#from cineuropa2017_utils import parsePDFprogram, load_sessions, parseFromURL
+from cineuropa2017_utils2 import parsePDFprogram2, load_sessions2
+import hashlib
 
 # parseFromURL("http://www.cineuropa.gal/2016")
 
@@ -99,12 +101,12 @@ def send_welcome(message):
 
     welcome_message = "{0} {1}. {2}".format(_("Hello"),message.from_user.first_name,_("Howdy!"))
     # Parsed PDF to JSON file
-    if not os.path.isfile("films.json"):
-        print("NOT EXISTS")
-        parsePDFprogram()
-    else:
-        print("EXISTS")
-    sessions = load_sessions()
+    # if not os.path.isfile("films.json"):
+    #     print("NOT EXISTS")
+    #     parsePDFprogram()
+    # else:
+    #     print("EXISTS")
+    # sessions = load_sessions()
     bot.reply_to(message, welcome_message)
 
 # help
@@ -137,8 +139,14 @@ def command_today(message):
 
     chat_id = message.chat.id
     day = datetime.date.today().day
-    sessions = load_sessions()
-    listaEventos = [x.toHTML() for x in sessions if day in x.day.split(' ')]
+    films = load_sessions2()
+
+    listaEventos = []
+    for film in films:
+        for y in film.sessions:
+            if str(day) in y.date.split(' '):
+                listaEventos.append(film.toSimple('Día {0} de novembro'.format(day)))
+
     if len(listaEventos) == 0:
         listaEventos = [_("No sessions today")]
     for ev in listaEventos:
@@ -155,9 +163,15 @@ def command_tomorrow(message):
     chat_id = message.chat.id
     tomorrow = datetime.date.today()+datetime.timedelta(days=1)
     day = tomorrow.day
-    sessions = load_sessions()
 
-    listaEventos = [x.toHTML() for x in sessions if day in x.day.split(' ')]
+    films = load_sessions2()
+
+    listaEventos = []
+    for film in films:
+        for y in film.sessions:
+            if str(day) in y.date.split(' '):
+                listaEventos.append(film.toSimple('Día {0} de novembro'.format(day)))
+
     if len(listaEventos) == 0:
         listaEventos = [_("No sessions tomorrow")]
     for ev in listaEventos:
@@ -175,10 +189,19 @@ def command_day(message):
 
     if len(message.text.split(" ")) > 1:
         day = message.text.split(" ")[1]
-        sessions = load_sessions()
-        listaEventos = [x.toHTML() for x in sessions if day in x.day.split(' ')]
+        films = load_sessions2()
+
+        listaEventos = []
+        for film in films:
+            for y in film.sessions:
+                if str(day) in y.date.split(' '):
+                    listaEventos.append(film.toSimple('Día {0} de novembro'.format(day)))
+
+        if len(listaEventos) == 0:
+            listaEventos = [_("No sessions today")]
         for ev in listaEventos:
             bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
+
     else:
         bot.send_message(chat_id, _("Invalid command"))
 
