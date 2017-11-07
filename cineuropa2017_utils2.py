@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-#import requests
+import requests
 from bs4 import BeautifulSoup
-#import urllib3
+import urllib3
+# To avoid 403
+from urllib.request import Request, urlopen
 
 #import PyPDF2
 import re
@@ -277,19 +279,73 @@ def object2session(anObject):
 #         t1.setNextSessions(', '.join(nextList))
 
 def parseFromURL(url):
-    print("parseFromURL")
-    response = urllib3.PoolManager().request('GET', url)
+    #print("parseFromURL")
+    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
 
-    if response.status == 200:
-        print("parseFromURL2")
-        soup = BeautifulSoup(response.data, "lxml")
-        qq = soup.find_all('div', attrs={'class': 'qq'})
-        print("parseFromURL3")
-        for q in qq:
-            print("parseFromURL4")
-            print(qq.find('p').find('a'))
+    sypnosis = ''
+
+    if urlopen(req).status == 200:
+        print("*"*80)
+
+        contents = urlopen(req).read()
+
+        rows = re.split(b'<div class="row">', contents)
+
+        strRows = [str(x) for x in rows[1:]]
+        soup1 = BeautifulSoup(strRows[0], "lxml")
+
+
+        #rows = soup.find_all('div',{"class":"row"})
+        #print("ROWS: "+str(len(rows)))
+        #print([qqq.text for qqq in qq])
+        print("ROW 0")
+        print([x.text for x in soup1.find('h1') if len(x.text)>0])
+        #print([x.text for x in rows[0].find("h1")])
+        print("ROW 1")
+        soup2 = BeautifulSoup(strRows[1], "lxml")
+        imaxe = "www.cineuropa.gal/"+soup2.find("img")["src"]
+        print("IMAXE: {0}".format(imaxe))
+        h4s = soup2.find_all('h4')
+        print(len(h4s))
+        print([x.text for x in h4s])
+        info = h4s[0].text
+        print("INFO: {0}".format(info))
+        sypnosis = h4s[-1].text
+        print("SYPNOSIS: {0}".format(sypnosis))
+        # bbb
+        # # --------------------------------------------------
+        # soup3 = BeautifulSoup(strRows[2], "lxml")
+        # h4s = soup3.find_all('h4')
+        # print(len(h4s))
+        # print([x.text for x in h4s])
+        # aaa
+        #
+        # ficha_artistica = h4s[1].text
+        # ficha_artistica_content = h4s[2].text
+        # ficha_tecnica = h4s[3].text
+        # tecnicos = re.split("<br />",str(h4s[4].text))
+        # ficha_tecnica_content = tecnicos[0]
+        # awards = h4s[5]
+        # awards_content = [x.text for x in h4s[6]('li')]
+        #
+        #
+        #
+        # print("ARTISTICA: {0}".format(ficha_artistica_content))
+        # print("TÉCNICA: {0}".format(ficha_tecnica_content))
+        # print("PREMIOS: {0}".format(awards_content))
+        #
+        #
+        # #print("\n".join(h4s))
+        # print("ROW 2")
+        # poster = "www.cineuropa.gal/"+rows[2].find("img")["src"]
+        # print("POSTER: {0}".format(poster))
+        # h4s_2 = rows[1].find_all('h4')
+        # criticaCE = h4s_2[0].text
+        # criticaCE_content = h4s_2[1].text
+        # print("CRÍTICA: {0}".format(criticaCE_content))
     else:
-        print("STATUS: "+str(response.status))
+        print("STATUS: "+str(urlopen(req).status))
+    return sypnosis
 
 def parseFromTxt(aFilename):
     allfilms = []
@@ -344,9 +400,16 @@ def parseFromTxt(aFilename):
             directors = []
             for x in h5:
                 titleYearDirector = x.text
-                titles.append(re.split('\(\d{4}\)',titleYearDirector)[0].strip())
-                directors.append(re.split('\(\d{4}\)',titleYearDirector)[1].strip())
-                years.append(re.search('\(\d{4}\)',titleYearDirector).group().strip()[1:-1])
+                print("***"+titleYearDirector+"***")
+                print(type(titleYearDirector))
+                if re.search("PELÍCULA SORPRESA",titleYearDirector):# == "PELÍCULA SORPRESA– ":
+                    titles.append('PELÍCULA SORPRESA')
+                    directors.append('')
+                    years.append('')
+                else:
+                    titles.append(re.split('\(\d{4}\)',titleYearDirector)[0].strip())
+                    directors.append(re.split('\(\d{4}\)',titleYearDirector)[1].strip())
+                    years.append(re.search('\(\d{4}\)',titleYearDirector).group().strip()[1:-1])
 
                 # print("TITLE: {0}".format(title))
                 # print("DIRECTOR: {0}".format(director[2:]))
@@ -354,6 +417,11 @@ def parseFromTxt(aFilename):
 
             # posters
             posters = ["http://www.cineuropa.gal/"+x.find("img")["src"] for x in a]
+            #
+            details = ["http://www.cineuropa.gal/"+x["href"] for x in a]
+            print(details)
+            det = details[0]
+            sypnosis = parseFromURL(det)
 
             for i in range(len(times)):
 
@@ -377,7 +445,9 @@ def parseFromTxt(aFilename):
                 # Check if filmObject already exits. If so, update. Else add it to list
                 if filmObjectId not in [x.id for x in allfilms]:
                     fo = FilmObject(id=filmObjectId, title=filmObjectIdString, year=theYear,
-                        director=theDirector, poster = thePoster, rate=random.randint(0,100),
+                        director=theDirector, poster = thePoster, sypnosis = sypnosis,
+                        # rate=random.randint(0,100),
+                        rate = 0,
                         sessions = [so])
                     allfilms.append(fo)
                 else:
@@ -386,7 +456,7 @@ def parseFromTxt(aFilename):
                     fo.addSession(so)
 
     # Save sessions to file
-    with open('allfilms2.json', 'w') as outputFile:
+    with open('allfilms3.json', 'w') as outputFile:
         json.dump([elem.toDict() for elem in allfilms], outputFile)
         # for elem in total:
         #     json.dump(elem.toDict(), outputFile, indent=4)
@@ -396,4 +466,4 @@ def parseFromTxt(aFilename):
 
 if __name__=="__main__":
     url = 'http://www.cineuropa.gal/2017/programa'
-    parseFromTxt("program2.txt")
+    parseFromTxt("program3.txt")
