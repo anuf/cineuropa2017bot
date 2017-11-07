@@ -59,18 +59,19 @@ else:
                   'top10': _('Lists top 10 rated films')
     }
 
-voteKeyboard = tb.types.InlineKeyboardMarkup()
-voteKeyboard.add(tb.types.InlineKeyboardButton("0",callback_data = "0"),
-    tb.types.InlineKeyboardButton("1",callback_data = "1"),
-    tb.types.InlineKeyboardButton("2",callback_data = "2"),
-    tb.types.InlineKeyboardButton("3",callback_data = "3"),
-    tb.types.InlineKeyboardButton("4",callback_data = "4"),
-    tb.types.InlineKeyboardButton("5",callback_data = "5"),
-    tb.types.InlineKeyboardButton("6",callback_data = "6"),
-    tb.types.InlineKeyboardButton("7",callback_data = "7"),
-    tb.types.InlineKeyboardButton("8",callback_data = "8"),
-    tb.types.InlineKeyboardButton("9",callback_data = "9"),
-    tb.types.InlineKeyboardButton("10",callback_data = "10"))
+
+voteKeyboard2 = tb.types.ReplyKeyboardMarkup(one_time_keyboard=True)
+voteKeyboard2.add(tb.types.KeyboardButton("0"),
+    tb.types.KeyboardButton("1"),
+    tb.types.KeyboardButton("2"),
+    tb.types.KeyboardButton("3"),
+    tb.types.KeyboardButton("4"),
+    tb.types.KeyboardButton("5"),
+    tb.types.KeyboardButton("6"),
+    tb.types.KeyboardButton("7"),
+    tb.types.KeyboardButton("8"),
+    tb.types.KeyboardButton("9"),
+    tb.types.KeyboardButton("10"))
 
 markup = tb.types.ReplyKeyboardMarkup(row_width=2)
 itembtn1 = tb.types.KeyboardButton(_('/start'))
@@ -88,10 +89,41 @@ markup.add(itembtn1, itembtn2, itembtn3, itembtn4, itembtn5)
 def test_callback(call):
     #print(call)
     print("FUNCTION: {0} : USER: {1}".format('test_callback',call.from_user.username))
-    thanksMessage = _("Congratulations {0}!").format(call.from_user.first_name) \
-    +". "+_("You gave a {0} to the film").format(call.data)
-    bot.send_message(call.message.chat.id, thanksMessage) # send the generated help page
+    if call.data != "CANCEL":
 
+        # Rating
+        rate = call.data.split(":")[0]
+        idFilm = call.data.split(":")[1]
+
+        # Thanks message
+        thanksMessage = _("Congratulations {0}!").format(call.from_user.first_name) \
+        +". "+_("You gave a {0} to the film").format(rate)
+
+        # Write to json file
+        with open("allfilms4.json", "r") as jsonFile:
+            data = json.load(jsonFile)
+
+        for d in data:
+            if d["id"] == idFilm:
+                print("FOUND "+ idFilm)
+                # Check that teh user has not voted yet
+                voters = [x[0] for x in d["rates"]]
+                votes = [x[1] for x in d["rates"]]
+                if call.from_user.username not in voters:
+                    # Update rate
+                    votes.append(int(rate))
+                    d["rate"] = sum(votes)/len(votes)
+                    d["rates"].append([call.from_user.username, rate])
+                else:
+                    thanksMessage = _("Sorry, you have already rated this film!")
+
+        with open("allfilms4.json", "w") as jsonFile:
+            json.dump(data, jsonFile)
+
+
+        bot.send_message(call.message.chat.id, thanksMessage) # send the generated help page
+    else:
+        print("Callback cancelled by user.")
     # bot.edit_message_text(text="Selected option: {}".format(call.data))
 # start
 @bot.message_handler(commands=['start','inicio'])
@@ -108,6 +140,42 @@ def send_welcome(message):
     #     print("EXISTS")
     # sessions = load_sessions()
     bot.reply_to(message, welcome_message)
+
+# start
+@bot.message_handler(regexp=re.compile('/fid_.{6}'))
+def filmDetail(message):
+    '''This handlert shows the detailed film.'''
+    print("FUNCTION: {0} : USER: {1}".format('aFilm',message.from_user.username))
+    chat_id = message.chat.id
+    films = load_sessions2()
+
+    theFilm = _("No film found")
+    for film in films:
+        for session in film.sessions:
+            if '/fid_'+session.id[:6] == message.text:
+                theFilm = film.toDetail(session.date)
+                thePoster = film.poster
+                theFilmId = film.id
+                break
+    caption = _('Do you want to vote?')
+
+    # define keyboard
+    voteKeyboard = tb.types.InlineKeyboardMarkup()
+    voteKeyboard.add(tb.types.InlineKeyboardButton("10",callback_data = "{0}:{1}".format(10,theFilmId)),
+        tb.types.InlineKeyboardButton("9",callback_data = "{0}:{1}".format(9,theFilmId)),
+        tb.types.InlineKeyboardButton("8",callback_data = "{0}:{1}".format(8,theFilmId)),
+        tb.types.InlineKeyboardButton("7",callback_data = "{0}:{1}".format(7,theFilmId)),
+        tb.types.InlineKeyboardButton("6",callback_data = "{0}:{1}".format(6,theFilmId)),
+        tb.types.InlineKeyboardButton("5",callback_data = "{0}:{1}".format(5,theFilmId)),
+        tb.types.InlineKeyboardButton("4",callback_data = "{0}:{1}".format(4,theFilmId)),
+        tb.types.InlineKeyboardButton("3",callback_data = "{0}:{1}".format(3,theFilmId)),
+        tb.types.InlineKeyboardButton("2",callback_data = "{0}:{1}".format(2,theFilmId)),
+        tb.types.InlineKeyboardButton("1",callback_data = "{0}:{1}".format(1,theFilmId)),
+        tb.types.InlineKeyboardButton("0",callback_data = "{0}:{1}".format(0,theFilmId)),
+        tb.types.InlineKeyboardButton(_("Cancel"),callback_data = "CANCEL"))
+
+    bot.reply_to(message, theFilm, parse_mode='HTML')
+    bot.send_photo(chat_id, thePoster, caption = caption, reply_markup=voteKeyboard)
 
 # help
 @bot.message_handler(commands=['help','axuda','ayuda'])

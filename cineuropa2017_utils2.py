@@ -51,7 +51,8 @@ def parsePDFprogram():
     pdfFileObj = open('C31.pdf','rb')     #'rb' for read binary mode
     pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
     numPages = pdfReader.numPages
-    days = ('LUNS', 'MARTES', 'MÉRCORES', 'XOVES','VENRES','SÁBADO', 'DOMINGO')
+    DAYS = ('LUNS', 'MARTES', 'MÉRCORES', 'XOVES','VENRES','SÁBADO', 'DOMINGO')
+    days = ('Luns', 'Martes', 'Mércores', 'Xoves','Venres','Sábado', 'Domingo')
     places = ('SEDE AFUNDACIÓN','CINEMA NUMAX', 'CGAC','TEATRO PRINCIPAL', 'SALÓN TEATRO', 'MULTICINES COMPOSTELA (SALA 2)')
     pageContent = []
     for iPage in range(7):#range(numPages):
@@ -250,7 +251,7 @@ def load_sessions2():
     '''
     Load JSON file where sessions are stored and creates list of Film objects.
     '''
-    with open('allfilms2.json', 'r') as inputFile:
+    with open('allfilms4.json', 'r') as inputFile:
         d = json.load(inputFile)
     print(d[-1])
     return [object2film2(x) for x in d]
@@ -258,9 +259,11 @@ def load_sessions2():
 def object2film2(anObject):
     '''Convert an json object into a Film'''
     sessionsList = [object2session(x) for x in anObject['sessions']]
-    return FilmObject(id=anObject['id'], title=anObject['title'], year=anObject['year'],
+    ratesList = anObject['rates']
+    return FilmObject(id=anObject['id'], title=anObject['title'],
+        synopsis=anObject['synopsis'], year=anObject['year'],
         director=anObject['director'], poster=anObject['poster'],
-        rate=anObject['rate'],
+        rate=anObject['rate'],rates=ratesList,
         sessions=sessionsList)
 
 def object2session(anObject):
@@ -282,7 +285,7 @@ def parseFromURL(url):
     #print("parseFromURL")
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
 
-    sypnosis = ''
+    synopsis = ''
 
     if urlopen(req).status == 200:
         print("*"*80)
@@ -310,8 +313,8 @@ def parseFromURL(url):
         print([x.text for x in h4s])
         info = h4s[0].text
         print("INFO: {0}".format(info))
-        sypnosis = h4s[-1].text
-        print("SYPNOSIS: {0}".format(sypnosis))
+        synopsis = h4s[-1].text
+        print("SYNOPSIS: {0}".format(synopsis))
         # bbb
         # # --------------------------------------------------
         # soup3 = BeautifulSoup(strRows[2], "lxml")
@@ -345,7 +348,7 @@ def parseFromURL(url):
         # print("CRÍTICA: {0}".format(criticaCE_content))
     else:
         print("STATUS: "+str(urlopen(req).status))
-    return sypnosis
+    return synopsis
 
 def parseFromTxt(aFilename):
     allfilms = []
@@ -421,7 +424,7 @@ def parseFromTxt(aFilename):
             details = ["http://www.cineuropa.gal/"+x["href"] for x in a]
             print(details)
             det = details[0]
-            sypnosis = parseFromURL(det)
+            synopsis = parseFromURL(det)
 
             for i in range(len(times)):
 
@@ -445,9 +448,10 @@ def parseFromTxt(aFilename):
                 # Check if filmObject already exits. If so, update. Else add it to list
                 if filmObjectId not in [x.id for x in allfilms]:
                     fo = FilmObject(id=filmObjectId, title=filmObjectIdString, year=theYear,
-                        director=theDirector, poster = thePoster, sypnosis = sypnosis,
+                        director=theDirector, poster = thePoster, synopsis = synopsis,
                         # rate=random.randint(0,100),
                         rate = 0,
+                        rates = [],
                         sessions = [so])
                     allfilms.append(fo)
                 else:
@@ -456,7 +460,7 @@ def parseFromTxt(aFilename):
                     fo.addSession(so)
 
     # Save sessions to file
-    with open('allfilms3.json', 'w') as outputFile:
+    with open('allfilms4.json', 'w') as outputFile:
         json.dump([elem.toDict() for elem in allfilms], outputFile)
         # for elem in total:
         #     json.dump(elem.toDict(), outputFile, indent=4)
