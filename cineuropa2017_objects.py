@@ -27,7 +27,7 @@ class FilmObject(object):
 
     def __init__(self, id ='', title='', year='',director='', poster = '',
         synopsis = '', duration = '', rate=None, rates = [], sessions = [],
-        url = ''):
+        url = '', gender = '', countries = ''):
         self.id = id
         self.title = title
         self.year = year
@@ -39,7 +39,9 @@ class FilmObject(object):
         self.synopsis = synopsis
         self.duration = duration
         self.url = url
-        
+        self.gender = gender
+        self.countries = countries
+
     def addSession(self, aSession):
         self.sessions.append(aSession)
 
@@ -124,4 +126,5 @@ class FilmObject(object):
             "synopsis": self.synopsis, "duration" : self.duration,
             "rate" : self.rate, "rates" : self.rates,
             "sessions" : [x.toDict() for x in self.sessions],
-            "url" : self.url}
+            "url" : self.url, "gender" :  self.gender, "countries" : self.countries
+            }

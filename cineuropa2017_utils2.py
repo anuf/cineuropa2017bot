@@ -306,7 +306,8 @@ def parseFromURL(url):
         # print(len(h4s))
         # print([x.text for x in h4s])
         info = h4s[0].text
-        print("INFO: {0}".format(info))
+        #if len(info.split("/")) != 4:
+        # print("INFO: {0} ::: {1}".format(info.split("/")[0],info))
         synopsis = h4s[-1].text
         #print("SYNOPSIS: {0}".format(synopsis))
 
@@ -423,10 +424,11 @@ def parseFromTxt(aFilename):
 
                 film_url = details[i]
                 synopsis, info = parseFromURL(film_url)
-                # print("+"*10)
-                # print(synopsis)
-                # print("*"*10)
-                # print(film_url)
+                # extract from info
+                gen  = re.search('experimental|videoarte|documental|ficción|drama', info.lower())
+                gender = gen.group() if gen is not None else ''
+                countries = re.sub("-",",", info.split("/")[0]).strip()
+
                 dur = re.search('/ (\d)* min. /',info)
                 duration = dur.group()[1:-1].strip() if dur is not None else ''
                 # print(duration)
@@ -460,7 +462,10 @@ def parseFromTxt(aFilename):
                         rate = 0,
                         rates = [],
                         sessions = [so],
-                        url = film_url)
+                        url = film_url,
+                        gender = gender.capitalize(),
+                        countries = countries
+                        )
                     allfilms.append(fo)
                 else:
                     indexFilmObject = [x.id for x in allfilms].index(filmObjectId)
