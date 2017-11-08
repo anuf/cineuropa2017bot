@@ -1,0 +1,62 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-09 00:34+0100\n"
+"PO-Revision-Date: 2017-11-09 00:37+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.4\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es_ES\n"
+
+#: ../cineuropa2017_objects.py:89 ../cineuropa2017_objects.py:104
+#: ../cineuropa2017_objects.py:114
+msgid "Title"
+msgstr "Título"
+
+#: ../cineuropa2017_objects.py:90 ../cineuropa2017_objects.py:105
+#: ../cineuropa2017_objects.py:115
+msgid "Director"
+msgstr "Director"
+
+#: ../cineuropa2017_objects.py:90 ../cineuropa2017_objects.py:105
+#: ../cineuropa2017_objects.py:115
+msgid "Day"
+msgstr "Día"
+
+#: ../cineuropa2017_objects.py:90 ../cineuropa2017_objects.py:106
+#: ../cineuropa2017_objects.py:115
+msgid "Time"
+msgstr "Hora"
+
+#: ../cineuropa2017_objects.py:91 ../cineuropa2017_objects.py:106
+#: ../cineuropa2017_objects.py:116
+msgid "Place"
+msgstr "Lugar"
+
+#: ../cineuropa2017_objects.py:91 ../cineuropa2017_objects.py:107
+#: ../cineuropa2017_objects.py:116
+msgid "Rate"
+msgstr "Puntuación"
+
+#: ../cineuropa2017_objects.py:91 ../cineuropa2017_objects.py:107
+#: ../cineuropa2017_objects.py:116
+msgid "Next sessions"
+msgstr "Próximas sesiones"
+
+#: ../cineuropa2017_objects.py:92 ../cineuropa2017_objects.py:117
+msgid "More"
+msgstr "Más"
+
+#: ../cineuropa2017_objects.py:108
+msgid "Synopsis"
+msgstr "Sinopsis"

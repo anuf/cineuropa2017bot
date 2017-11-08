@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-08 00:41+0100\n"
-"PO-Revision-Date: 2017-11-08 00:50+0100\n"
+"POT-Creation-Date: 2017-11-09 00:31+0100\n"
+"PO-Revision-Date: 2017-11-09 00:40+0100\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -106,7 +106,7 @@ msgstr "No hay sesiones hoy"
 
 #: ../cineuropa2017.py:221 ../cineuropa2017.py:246 ../cineuropa2017.py:271
 msgid "FILM"
-msgstr "PELÍCULA"
+msgstr ""
 
 #: ../cineuropa2017.py:244
 msgid "No sessions tomorrow"
