@@ -253,7 +253,7 @@ def load_sessions2():
     '''
     with open('allfilms5.json', 'r') as inputFile:
         d = json.load(inputFile)
-    print(_("Sessions loaded"))
+    #print(_("Sessions loaded"))
     return [object2film2(x) for x in d]
 
 def object2film2(anObject):
@@ -291,8 +291,7 @@ def parseFromURL(url):
         # print("*"*80)
 
         contents = urlopen(req).read()
-
-        rows = re.split(b'<div class="row">', contents)
+        rows = re.split('<div class="row">', contents.decode("utf-8"))
 
         strRows = [str(x) for x in rows[1:]]
         soup1 = BeautifulSoup(strRows[0], "lxml")
@@ -307,7 +306,7 @@ def parseFromURL(url):
         # print(len(h4s))
         # print([x.text for x in h4s])
         info = h4s[0].text
-        # print("INFO: {0}".format(info))
+        print("INFO: {0}".format(info))
         synopsis = h4s[-1].text
         #print("SYNOPSIS: {0}".format(synopsis))
 
