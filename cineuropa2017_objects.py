@@ -26,7 +26,8 @@ class SessionObject(object):
 class FilmObject(object):
 
     def __init__(self, id ='', title='', year='',director='', poster = '',
-        synopsis = '', rate=None, rates = [], sessions = []):
+        synopsis = '', duration = '', rate=None, rates = [], sessions = [],
+        url = ''):
         self.id = id
         self.title = title
         self.year = year
@@ -36,7 +37,9 @@ class FilmObject(object):
         self.rates = rates
         self.sessions = sessions
         self.synopsis = synopsis
-
+        self.duration = duration
+        self.url = url
+        
     def addSession(self, aSession):
         self.sessions.append(aSession)
 
@@ -116,6 +119,9 @@ class FilmObject(object):
     #     return "<b>{0}:</b> {1}\n".format(self.rate, self.title)
 
     def toDict(self):
-        return {"id" : self.id, "title" : self.title, "year" : self.year, "director" : self.director,
-            "poster" : self.poster, "synopsis": self.synopsis, "rate" : self.rate, "rates" : self.rates,
-            "sessions": [x.toDict() for x in self.sessions]}
+        return {"id" : self.id, "title" : self.title, "year" : self.year,
+            "director" : self.director, "poster" : self.poster,
+            "synopsis": self.synopsis, "duration" : self.duration,
+            "rate" : self.rate, "rates" : self.rates,
+            "sessions" : [x.toDict() for x in self.sessions],
+            "url" : self.url}

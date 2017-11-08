@@ -17,7 +17,7 @@ from cineuropa2017_objects import FilmObject, SessionObject
 import hashlib
 
 t = gettext.translation(
-    'cineuropa2017', 'locale',
+    'cineuropa2017_utils', 'locale',
     fallback=True,
 )
 _ = t
@@ -251,7 +251,7 @@ def load_sessions2():
     '''
     Load JSON file where sessions are stored and creates list of Film objects.
     '''
-    with open('allfilms4.json', 'r') as inputFile:
+    with open('allfilms5.json', 'r') as inputFile:
         d = json.load(inputFile)
     print(d[-1])
     return [object2film2(x) for x in d]
@@ -286,7 +286,7 @@ def parseFromURL(url):
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
 
     synopsis = ''
-
+    info = ''
     if urlopen(req).status == 200:
         print("*"*80)
 
@@ -314,7 +314,8 @@ def parseFromURL(url):
         info = h4s[0].text
         print("INFO: {0}".format(info))
         synopsis = h4s[-1].text
-        print("SYNOPSIS: {0}".format(synopsis))
+        #print("SYNOPSIS: {0}".format(synopsis))
+
         # bbb
         # # --------------------------------------------------
         # soup3 = BeautifulSoup(strRows[2], "lxml")
@@ -348,7 +349,7 @@ def parseFromURL(url):
         # print("CRÍTICA: {0}".format(criticaCE_content))
     else:
         print("STATUS: "+str(urlopen(req).status))
-    return synopsis
+    return synopsis, info
 
 def parseFromTxt(aFilename):
     allfilms = []
@@ -422,12 +423,20 @@ def parseFromTxt(aFilename):
             posters = ["http://www.cineuropa.gal/"+x.find("img")["src"] for x in a]
             #
             details = ["http://www.cineuropa.gal/"+x["href"] for x in a]
-            print(details)
-            det = details[0]
-            synopsis = parseFromURL(det)
+            # print(details)
 
             for i in range(len(times)):
 
+                film_url = details[i]
+                synopsis, info = parseFromURL(film_url)
+                # print("+"*10)
+                # print(synopsis)
+                # print("*"*10)
+                # print(film_url)
+                dur = re.search('/ (\d)* min. /',info)
+                duration = dur.group()[1:-1].strip() if dur is not None else ''
+                # print(duration)
+                # print("-"*10)
                 theTime = times[i][0]
                 # SESSION OBJECT
                 ssObjectIdString = theDay+thePlace+theTime
@@ -447,12 +456,17 @@ def parseFromTxt(aFilename):
 
                 # Check if filmObject already exits. If so, update. Else add it to list
                 if filmObjectId not in [x.id for x in allfilms]:
-                    fo = FilmObject(id=filmObjectId, title=filmObjectIdString, year=theYear,
-                        director=theDirector, poster = thePoster, synopsis = synopsis,
-                        # rate=random.randint(0,100),
+                    fo = FilmObject(id = filmObjectId,
+                        title = filmObjectIdString,
+                        year = theYear,
+                        director = theDirector,
+                        poster = thePoster,
+                        synopsis = synopsis,
+                        duration = duration,
                         rate = 0,
                         rates = [],
-                        sessions = [so])
+                        sessions = [so],
+                        url = film_url)
                     allfilms.append(fo)
                 else:
                     indexFilmObject = [x.id for x in allfilms].index(filmObjectId)
@@ -460,7 +474,7 @@ def parseFromTxt(aFilename):
                     fo.addSession(so)
 
     # Save sessions to file
-    with open('allfilms4.json', 'w') as outputFile:
+    with open('allfilms5.json', 'w') as outputFile:
         json.dump([elem.toDict() for elem in allfilms], outputFile)
         # for elem in total:
         #     json.dump(elem.toDict(), outputFile, indent=4)
