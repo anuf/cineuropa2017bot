@@ -288,7 +288,7 @@ def parseFromURL(url):
     synopsis = ''
     info = ''
     if urlopen(req).status == 200:
-        print("*"*80)
+        # print("*"*80)
 
         contents = urlopen(req).read()
 
@@ -297,22 +297,17 @@ def parseFromURL(url):
         strRows = [str(x) for x in rows[1:]]
         soup1 = BeautifulSoup(strRows[0], "lxml")
 
-
-        #rows = soup.find_all('div',{"class":"row"})
-        #print("ROWS: "+str(len(rows)))
-        #print([qqq.text for qqq in qq])
-        print("ROW 0")
-        print([x.text for x in soup1.find('h1') if len(x.text)>0])
-        #print([x.text for x in rows[0].find("h1")])
-        print("ROW 1")
+        # print("ROW 0")
+        # print([x.text for x in soup1.find('h1') if len(x.text)>0])
+        # print("ROW 1")
         soup2 = BeautifulSoup(strRows[1], "lxml")
         imaxe = "www.cineuropa.gal/"+soup2.find("img")["src"]
-        print("IMAXE: {0}".format(imaxe))
+        # print("IMAXE: {0}".format(imaxe))
         h4s = soup2.find_all('h4')
-        print(len(h4s))
-        print([x.text for x in h4s])
+        # print(len(h4s))
+        # print([x.text for x in h4s])
         info = h4s[0].text
-        print("INFO: {0}".format(info))
+        # print("INFO: {0}".format(info))
         synopsis = h4s[-1].text
         #print("SYNOPSIS: {0}".format(synopsis))
 
@@ -404,8 +399,8 @@ def parseFromTxt(aFilename):
             directors = []
             for x in h5:
                 titleYearDirector = x.text
-                print("***"+titleYearDirector+"***")
-                print(type(titleYearDirector))
+                # print("***"+titleYearDirector+"***")
+                # print(type(titleYearDirector))
                 if re.search("PELÍCULA SORPRESA",titleYearDirector):# == "PELÍCULA SORPRESA– ":
                     titles.append('PELÍCULA SORPRESA')
                     directors.append('')
@@ -447,7 +442,7 @@ def parseFromTxt(aFilename):
 
                 theTitle = titles[i]
                 thePoster = posters[i]
-                theDirector = directors[i]
+                theDirector = directors[i][1:].strip()
                 theYear = years[i]
 
                 filmObjectIdString = theTitle
