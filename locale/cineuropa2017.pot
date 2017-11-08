@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-04 21:48+0100\n"
+"POT-Creation-Date: 2017-11-08 00:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,61 +17,108 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../cineuropa2017.py:30
+#: ../cineuropa2017.py:34 ../cineuropa2017.py:44 ../cineuropa2017.py:54
 msgid "Gives you information about the available commands"
 msgstr ""
 
-#: ../cineuropa2017.py:31
+#: ../cineuropa2017.py:35 ../cineuropa2017.py:45 ../cineuropa2017.py:55
 msgid "Get used to the bot"
 msgstr ""
 
-#: ../cineuropa2017.py:32
+#: ../cineuropa2017.py:36 ../cineuropa2017.py:46 ../cineuropa2017.py:56
 msgid "Shows films for the current day"
 msgstr ""
 
-#: ../cineuropa2017.py:33
+#: ../cineuropa2017.py:37 ../cineuropa2017.py:47 ../cineuropa2017.py:57
 msgid "Shows films for tomorrow"
 msgstr ""
 
-#: ../cineuropa2017.py:34
-msgid "List n top rated films"
+#: ../cineuropa2017.py:38 ../cineuropa2017.py:48 ../cineuropa2017.py:58
+msgid "Lists n top rated films"
 msgstr ""
 
-#: ../cineuropa2017.py:56
+#: ../cineuropa2017.py:39 ../cineuropa2017.py:49 ../cineuropa2017.py:59
+msgid "Lists top 10 rated films"
+msgstr ""
+
+#: ../cineuropa2017.py:77
+msgid "/start"
+msgstr ""
+
+#: ../cineuropa2017.py:78
+msgid "/help"
+msgstr ""
+
+#: ../cineuropa2017.py:79
+msgid "/today"
+msgstr ""
+
+#: ../cineuropa2017.py:80
+msgid "/tomorrow"
+msgstr ""
+
+#: ../cineuropa2017.py:81
+msgid "/top10"
+msgstr ""
+
+#: ../cineuropa2017.py:99
 #, python-brace-format
 msgid "Congratulations {0}!"
 msgstr ""
 
-#: ../cineuropa2017.py:57
+#: ../cineuropa2017.py:100
 #, python-brace-format
 msgid "You gave a {0} to the film"
 msgstr ""
 
-#: ../cineuropa2017.py:65
+#: ../cineuropa2017.py:118
+msgid "Sorry, you have already rated this film!"
+msgstr ""
+
+#: ../cineuropa2017.py:134
 msgid "Hello"
 msgstr ""
 
-#: ../cineuropa2017.py:65
+#: ../cineuropa2017.py:134
 msgid "Howdy!"
 msgstr ""
 
-#: ../cineuropa2017.py:82
+#: ../cineuropa2017.py:152
+msgid "No film found"
+msgstr ""
+
+#: ../cineuropa2017.py:160
+msgid "Do you want to vote?"
+msgstr ""
+
+#: ../cineuropa2017.py:175
+msgid "Cancel"
+msgstr ""
+
+#: ../cineuropa2017.py:189
 msgid "Available commands: \n"
 msgstr ""
 
-#: ../cineuropa2017.py:103
+#: ../cineuropa2017.py:219 ../cineuropa2017.py:269
 msgid "No sessions today"
 msgstr ""
 
-#: ../cineuropa2017.py:105 ../cineuropa2017.py:123 ../cineuropa2017.py:139
-#: ../cineuropa2017.py:157
+#: ../cineuropa2017.py:221 ../cineuropa2017.py:246 ../cineuropa2017.py:271
 msgid "FILM"
 msgstr ""
 
-#: ../cineuropa2017.py:121
+#: ../cineuropa2017.py:244
 msgid "No sessions tomorrow"
 msgstr ""
 
-#: ../cineuropa2017.py:141 ../cineuropa2017.py:160
+#: ../cineuropa2017.py:274 ../cineuropa2017.py:296 ../cineuropa2017.py:317
 msgid "Invalid command"
+msgstr ""
+
+#: ../cineuropa2017.py:290
+msgid "TOP"
+msgstr ""
+
+#: ../cineuropa2017.py:311
+msgid "TOP 10"
 msgstr ""

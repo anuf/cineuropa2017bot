@@ -109,7 +109,7 @@ class FilmObject(object):
         return "<b>{0}:</b> {1}\n<b>{2}:</b> {3}\n<b>{4}:</b> {5}\n<b>{6}:</b> {7}\n<b>{8}:</b> {9}\n<b>{10}:</b> {11}\n<b>{12}:</b> {13}".format(_("Title"), self.title,
             _("Director"), self.director, _("Day"), self.day,_("Time"), self.time,
             _("Place"), self.place, _("Rate"), self.rate, _("Next sessions"), self.nextSessions,
-            _(""), "/fid_"+self.id
+            _("More"), "/fid_"+self.id
             )
     #
     # def toTopListHTML(self):
