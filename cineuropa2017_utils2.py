@@ -253,7 +253,7 @@ def load_sessions2():
     '''
     with open('allfilms5.json', 'r') as inputFile:
         d = json.load(inputFile)
-    print(d[-1])
+    print(_("Sessions loaded"))
     return [object2film2(x) for x in d]
 
 def object2film2(anObject):
@@ -470,7 +470,7 @@ def parseFromTxt(aFilename):
 
     # Save sessions to file
     with open('allfilms5.json', 'w') as outputFile:
-        json.dump([elem.toDict() for elem in allfilms], outputFile)
+        json.dump([elem.toDict() for elem in allfilms], outputFile, indent=4)
         # for elem in total:
         #     json.dump(elem.toDict(), outputFile, indent=4)
     # print("ALLFILMS : {0}".format(len(allfilms)))
