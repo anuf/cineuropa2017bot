@@ -116,9 +116,9 @@ class FilmObject(object):
             _("Place"), self.place, _("Rate"), self.rate, _("Next sessions"), self.nextSessions,
             _("More"), "/fid_"+self.id
             )
-    #
-    # def toTopListHTML(self):
-    #     return "<b>{0}:</b> {1}\n".format(self.rate, self.title)
+
+    def toTopListHTML(self):
+        return "{0} : {1}\n".format("<b>"+str(self.rate)+"</b>", self.title)
 
     def toDict(self):
         return {"id" : self.id, "title" : self.title, "year" : self.year,

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import PyPDF2
 import re
 
 import telebot as tb
@@ -14,11 +13,10 @@ import datetime
 import json
 import os
 import locale
-#from cineuropa2017_utils import parsePDFprogram, load_sessions, parseFromURL
-from cineuropa2017_utils2 import parsePDFprogram2, load_sessions2
+
+from cineuropa2017_utils import load_from_JSON
 import hashlib
 
-# parseFromURL("http://www.cineuropa.gal/2016")
 
 t = gettext.translation(
     'cineuropa2017', 'locale',
@@ -30,48 +28,31 @@ bot = tb.TeleBot(TOKEN)
 
 if locale.getlocale()[0] == 'es_ES':
     commands = {  # command description used in the "help" command ordered alphabetically
-                  #'day n': _('Shows films from a given day'),
                   'ayuda': _('Gives you information about the available commands'),
                   'inicio': _('Get used to the bot'),
                   'hoy': _('Shows films for the current day'),
                   'mañana': _('Shows films for tomorrow'),
-                  'mejores': _('Lists n top rated films'),
+                  'mejores n': _('Lists n top rated films'),
                   'mejores10': _('Lists top 10 rated films')
     }
 elif locale.getlocale()[0] == 'gl_ES':
     commands = {  # command description used in the "help" command ordered alphabetically
-                  #'day n': _('Shows films from a given day'),
                   'axuda': _('Gives you information about the available commands'),
                   'inicio': _('Get used to the bot'),
                   'hoxe': _('Shows films for the current day'),
                   'mañá': _('Shows films for tomorrow'),
-                  'mellores': _('Lists n top rated films'),
+                  'mellores n': _('Lists n top rated films'),
                   'mellores10': _('Lists top 10 rated films')
     }
 else:
     commands = {  # command description used in the "help" command ordered alphabetically
-                  #'day n': _('Shows films from a given day'),
                   'help': _('Gives you information about the available commands'),
                   'start': _('Get used to the bot'),
                   'today': _('Shows films for the current day'),
                   'tomorrow': _('Shows films for tomorrow'),
-                  'top': _('Lists n top rated films'),
+                  'top n': _('Lists n top rated films'),
                   'top10': _('Lists top 10 rated films')
     }
-
-
-voteKeyboard2 = tb.types.ReplyKeyboardMarkup(one_time_keyboard=True)
-voteKeyboard2.add(tb.types.KeyboardButton("0"),
-    tb.types.KeyboardButton("1"),
-    tb.types.KeyboardButton("2"),
-    tb.types.KeyboardButton("3"),
-    tb.types.KeyboardButton("4"),
-    tb.types.KeyboardButton("5"),
-    tb.types.KeyboardButton("6"),
-    tb.types.KeyboardButton("7"),
-    tb.types.KeyboardButton("8"),
-    tb.types.KeyboardButton("9"),
-    tb.types.KeyboardButton("10"))
 
 markup = tb.types.ReplyKeyboardMarkup(row_width=2)
 itembtn1 = tb.types.KeyboardButton(_('/start'))
@@ -124,7 +105,7 @@ def test_callback(call):
         bot.send_message(call.message.chat.id, thanksMessage) # send the generated help page
     else:
         print("Callback cancelled by user.")
-    # bot.edit_message_text(text="Selected option: {}".format(call.data))
+
 # start
 @bot.message_handler(commands=['start','inicio'])
 def send_welcome(message):
@@ -132,13 +113,6 @@ def send_welcome(message):
     print("FUNCTION: {0} : USER: {1}".format('send_welcome',message.from_user.username))
 
     welcome_message = "{0} {1}. {2}".format(_("Hello"),message.from_user.first_name,_("Howdy!"))
-    # Parsed PDF to JSON file
-    # if not os.path.isfile("films.json"):
-    #     print("NOT EXISTS")
-    #     parsePDFprogram()
-    # else:
-    #     print("EXISTS")
-    # sessions = load_sessions()
     bot.reply_to(message, welcome_message)
 
 # start
@@ -147,7 +121,7 @@ def filmDetail(message):
     '''This handlert shows the detailed film.'''
     print("FUNCTION: {0} : USER: {1}".format('aFilm',message.from_user.username))
     chat_id = message.chat.id
-    films = load_sessions2()
+    films = load_from_JSON()
 
     theFilm = _("No film found")
     for film in films:
@@ -207,7 +181,7 @@ def command_today(message):
 
     chat_id = message.chat.id
     day = datetime.date.today().day
-    films = load_sessions2()
+    films = load_from_JSON()
 
     listaEventos = []
     for film in films:
@@ -232,7 +206,7 @@ def command_tomorrow(message):
     tomorrow = datetime.date.today()+datetime.timedelta(days=1)
     day = tomorrow.day
 
-    films = load_sessions2()
+    films = load_from_JSON()
 
     listaEventos = []
     for film in films:
@@ -257,7 +231,7 @@ def command_day(message):
 
     if len(message.text.split(" ")) > 1:
         day = message.text.split(" ")[1]
-        films = load_sessions2()
+        films = load_from_JSON()
 
         listaEventos = []
         for film in films:
@@ -284,14 +258,16 @@ def command_top(message):
 
     if len(message.text.split(" ")) > 1:
         n = message.text.split(" ")[1]
-        sessions = load_sessions()
-        sortedList = sorted(sessions, key = lambda x: x.rate, reverse=True)
-        listaEventos = [x.toTopListHTML() for x in sortedList]
-        returnMessage = "********** {0} **********\n".format(_('TOP'))
-        for i in range(int(n)):
-            returnMessage += "{0}".format(listaEventos[i])
-        bot.send_message(chat_id, returnMessage, parse_mode='HTML')
-
+        if n.isdigit():
+            sessions = load_from_JSON()
+            sortedList = sorted(sessions, key = lambda x: x.rate, reverse=True)
+            listaEventos = [x.toTopListHTML() for x in sortedList]
+            returnMessage = "********** {0} **********\n".format(_('TOP'))
+            for i in range(int(n)):
+                returnMessage += "{0}".format(listaEventos[i])
+            bot.send_message(chat_id, returnMessage, parse_mode='HTML')
+        else:
+            bot.send_message(chat_id, _("Invalid command"))
     else:
         bot.send_message(chat_id, _("Invalid command"))
 
@@ -305,7 +281,7 @@ def command_top10(message):
     chat_id = message.chat.id
 
     if len(message.text.split(" ")) == 1:
-        sessions = load_sessions()
+        sessions = load_from_JSON()
         sortedList = sorted(sessions, key = lambda x: x.rate, reverse=True)
         listaEventos = [x.toTopListHTML() for x in sortedList]
         returnMessage = "********** {0} **********\n".format(_('TOP 10'))
