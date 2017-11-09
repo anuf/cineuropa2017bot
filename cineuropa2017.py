@@ -81,7 +81,7 @@ def test_callback(call):
         +". "+_("You gave a {0} to the film").format(rate)
 
         # Write to json file
-        with open("allfilms4.json", "r") as jsonFile:
+        with open("allfilms5.json", "r") as jsonFile:
             data = json.load(jsonFile)
 
         for d in data:
@@ -98,7 +98,7 @@ def test_callback(call):
                 else:
                     thanksMessage = _("Sorry, you have already rated this film!")
 
-        with open("allfilms4.json", "w") as jsonFile:
+        with open("allfilms5.json", "w") as jsonFile:
             json.dump(data, jsonFile)
 
 
