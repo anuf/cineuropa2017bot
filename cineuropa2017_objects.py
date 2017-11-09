@@ -4,7 +4,7 @@ import gettext
 import datetime
 
 t = gettext.translation(
-    'film', 'locale',
+    'cineuropa2017_objects', 'locale',
     fallback=True,
 )
 _ = t.gettext

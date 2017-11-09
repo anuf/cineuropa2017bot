@@ -142,7 +142,7 @@ def send_welcome(message):
     bot.reply_to(message, welcome_message)
 
 # start
-@bot.message_handler(regexp=re.compile('/fid_.{6}'))
+@bot.message_handler(regexp='/fid_.{6}')
 def filmDetail(message):
     '''This handlert shows the detailed film.'''
     print("FUNCTION: {0} : USER: {1}".format('aFilm',message.from_user.username))
