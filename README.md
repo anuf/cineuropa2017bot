@@ -1,5 +1,6 @@
 # Telegram Bot for Cineuropa 2017 films
-Films from Cineuropa 2017 film festival parsed from official PDF program to be accesed through this Telegram Bot.
+Films from Cineuropa 2017 film festival parsed from official site to be accessed
+through this Telegram Bot.
 
 It is written in Python based on **[pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI)**. There are other wrappers for the Telegram API, but we have tried this for the moment.
 
