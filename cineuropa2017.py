@@ -88,7 +88,9 @@ if locale.getlocale()[0] == 'es_ES':
                   'hoy': _('Shows films for the current day'),
                   'mañana': _('Shows films for tomorrow'),
                   'mejores n': _('Lists n top rated films'),
-                  'mejores10': _('Lists top 10 rated films')
+                  'mejores10': _('Lists top 10 rated films'),
+                  'mispuntuaciones': _('Lists your rated films')
+
     }
 elif locale.getlocale()[0] == 'gl_ES':
     commands = {  # command description used in the "help" command ordered alphabetically
@@ -97,7 +99,8 @@ elif locale.getlocale()[0] == 'gl_ES':
                   'hoxe': _('Shows films for the current day'),
                   'mañá': _('Shows films for tomorrow'),
                   'mellores n': _('Lists n top rated films'),
-                  'mellores10': _('Lists top 10 rated films')
+                  'mellores10': _('Lists top 10 rated films'),
+                  'asmiñaspuntuacións': _('Lists your rated films')
     }
 else:
     commands = {  # command description used in the "help" command ordered alphabetically
@@ -106,7 +109,8 @@ else:
                   'today': _('Shows films for the current day'),
                   'tomorrow': _('Shows films for tomorrow'),
                   'top n': _('Lists n top rated films'),
-                  'top10': _('Lists top 10 rated films')
+                  'top10': _('Lists top 10 rated films'),
+                  'myratings': _('Lists your rated films')
     }
 
 markup = tb.types.ReplyKeyboardMarkup(row_width=2)
@@ -229,7 +233,11 @@ def command_help(message):
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_help',chat_id))
 
-    help_text = _("Available commands: \n")
+    help_text = _('Unofficial bot for Cineuropa#31 film festival (2017).')
+    help_text += '\n'+_('Film information and unofficial rating.')
+    help_text += '\n'+_('No responsability on information veracity.')
+    help_text += '\n'+_("Available commands:\n")
+    
     for key in commands:  # generate help text out of the commands dictionary defined at the top
         help_text += "/" + key + ": "
         help_text += commands[key] + "\n"
