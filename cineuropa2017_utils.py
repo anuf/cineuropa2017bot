@@ -45,7 +45,7 @@ def load_from_JSON():
     '''
     Load JSON file where sessions are stored and creates list of Film objects.
     '''
-    with open('allfilms_base.json', 'r') as inputFile:
+    with open('allfilms.json', 'r') as inputFile:
         d = json.load(inputFile)
     #print(_("Sessions loaded"))
     return [object2film(x) for x in d]
