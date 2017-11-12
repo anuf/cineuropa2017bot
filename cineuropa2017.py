@@ -360,6 +360,27 @@ def command_top10(message):
     else:
         bot.send_message(chat_id, _("Invalid command"))
 
+@bot.message_handler(commands=['myratings','mispuntuaciones','asmiñaspuntuacions'])
+def command_myvotes(message):
+    '''Show user's ratings'''
+    chat_id = message.chat.id
+    print("FUNCTION: {0} : USER: {1}".format('command_myvotes',chat_id))
+
+    if len(message.text.split(" ")) == 1:
+        sessions = load_from_JSON()
+        sortedList = sorted([x for x in sessions if chat_id in [y[0] for y in x.rates]], key = lambda x: x.rate, reverse=True)
+        returnMessage = "********** {0} **********\n".format(_('MY RATINGS'))
+        if len(sortedList) > 0:
+            listaEventos = [x.toTopListHTML() for x in sortedList]
+            for i in range(len(listaEventos)):
+                returnMessage += "{0}".format(listaEventos[i])
+        else:
+                returnMessage += _("You haven't rated any film.")
+        bot.send_message(chat_id, returnMessage, parse_mode='HTML')
+
+    else:
+        bot.send_message(chat_id, _("Invalid command"))
+
 
 on_start('activeSessions')
 
