@@ -141,7 +141,7 @@ def test_callback(call):
         +". "+_("You gave a {0} to the film").format(rate)
 
         # Write to json file
-        with open("allfilms5.json", "r") as jsonFile:
+        with open("allfilms.json", "r") as jsonFile:
             data = json.load(jsonFile)
 
         for d in data:
@@ -158,7 +158,7 @@ def test_callback(call):
                 else:
                     thanksMessage = _("Sorry, you have already rated this film!")
 
-        with open("allfilms5.json", "w") as jsonFile:
+        with open("allfilms.json", "w") as jsonFile:
             json.dump(data, jsonFile)
 
 
@@ -237,7 +237,7 @@ def command_help(message):
     help_text += '\n'+_('Film information and unofficial rating.')
     help_text += '\n'+_('No responsability on information veracity.')
     help_text += '\n'+_("Available commands:\n")
-    
+
     for key in commands:  # generate help text out of the commands dictionary defined at the top
         help_text += "/" + key + ": "
         help_text += commands[key] + "\n"
