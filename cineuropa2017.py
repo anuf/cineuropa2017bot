@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 
-import re
-
+# Bot imports
 import telebot as tb
-import requests
-
+import urllib3
+# Project imports
 from cineuropa2017_token import TOKEN
+from cineuropa2017_utils import load_from_JSON
 
+# General imports
 import gettext
+import requests
+import re
 import time
 import datetime
 import json
 import os
 import locale
-
-from cineuropa2017_utils import load_from_JSON
 import hashlib
 
 
@@ -25,6 +26,64 @@ t = gettext.translation(
 _ = t.gettext
 
 bot = tb.TeleBot(TOKEN)
+
+def on_start(aFilename):
+    try:
+        print("on_start()")
+
+        # Create a file to store sessions for push notifications if it does not
+        # already exits
+        if not os.path.exists(aFilename):
+            # generate the file
+            open(aFilename,'w')
+        else:
+            with open(aFilename,'r') as fname:
+                d = json.load(fname)
+                for k, v in d.items():
+                    apologize_text = _("Hi {0}!, I'm sorry I have been out of coverage. \
+Now I'm alive again! Please count on me.").format(v)
+                    bot.send_message(k,apologize_text)
+    except Exception as e:
+        print("Error on_start(): {0}".format(e))
+# Some functions taken from:
+# https://github.com/eternnoir/pyTelegramBotAPI/blob/master/examples/deep_linking.py
+def extract_unique_code(message):
+    #return
+    # Extracts the unique_code from the sent /start command.
+    return message.chat.id#text.split()[1] if len(text.split()) > 1 else None
+
+def in_storage(unique_code):
+    #return
+    # Should check if a unique code exists in storage
+    with open('activeSessions' ,'r') as storageFile:
+        d = json.load(storageFile)
+    return unique_code in d.keys()
+
+def get_username_from_storage(unique_code):
+    #return
+    # Does a query to the storage, retrieving the associated username
+    if os.stat("activeSessions").st_size == 0:
+        return None
+    else:
+        with open('activeSessions','r') as storageFile:
+            d = json.load(storageFile)
+        return d[unique_code] if in_storage(unique_code) else None
+
+def save_chat_id(chat_id, uname):
+    #return
+    # Save the chat_id->username to storage
+    try:
+        if os.stat("activeSessions").st_size == 0:
+            d = {}
+        else:
+            with open('activeSessions' ,'r') as storageFile:
+                d = json.load(storageFile)
+
+        d[chat_id] = uname
+        with open('activeSessions' ,'w') as storageFile:
+            json.dump(d, storageFile)
+    except Exception as e:
+        print("ERROR save_chat_id(): {0}".format(e))
 
 if locale.getlocale()[0] == 'es_ES':
     commands = {  # command description used in the "help" command ordered alphabetically
@@ -63,15 +122,16 @@ itembtn5 = tb.types.KeyboardButton(_('/top10'))
 
 markup.add(itembtn1, itembtn2, itembtn3, itembtn4, itembtn5)
 
-#proxy_url = "http://proxy.server:3128"
-#urllib3.ProxyManager(proxy_url=proxy_url, num_pools=3, maxsize=10, retries=False, timeout=30)
+# proxy_url = "http://proxy.server:3128"
+# urllib3.ProxyManager(proxy_url=proxy_url, num_pools=3, maxsize=10, retries=False, timeout=30)
 
 @bot.callback_query_handler(func=lambda call: True)
 def test_callback(call):
+
     #print(call)
     print("FUNCTION: {0} : USER: {1}".format('test_callback',call.from_user.username))
     if call.data != "CANCEL":
-
+        print(call)
         # Rating
         rate = call.data.split(":")[0]
         idFilm = call.data.split(":")[1]
@@ -89,12 +149,12 @@ def test_callback(call):
                 print("FOUND "+ idFilm)
                 # Check that teh user has not voted yet
                 voters = [x[0] for x in d["rates"]]
-                votes = [x[1] for x in d["rates"]]
-                if call.from_user.username not in voters:
+                votes = [int(x[1]) for x in d["rates"]]
+                if call.from_user.id not in voters:
                     # Update rate
                     votes.append(int(rate))
                     d["rate"] = sum(votes)/len(votes)
-                    d["rates"].append([call.from_user.username, rate])
+                    d["rates"].append([call.from_user.id, rate])
                 else:
                     thanksMessage = _("Sorry, you have already rated this film!")
 
@@ -110,16 +170,33 @@ def test_callback(call):
 @bot.message_handler(commands=['start','inicio'])
 def send_welcome(message):
     '''This handlert shows a welcome message.'''
-    print("FUNCTION: {0} : USER: {1}".format('send_welcome',message.from_user.username))
+    print(message)
+    print("chatID: {0}".format(message.chat.id))
+    print("fromUSERID: {0}".format(message.from_user.id))
+    print("entitiesType: {0}".format(message.entities[0].type))
 
-    welcome_message = "{0} {1}. {2}".format(_("Hello"),message.from_user.first_name,_("Howdy!"))
-    bot.reply_to(message, welcome_message)
+    print("FUNCTION: {0} : USER: {1}".format('send_welcome',message.chat.id))
+
+    #welcome_message = "{0} {1}. {2}".format(_("Hello"),message.from_user.first_name,_("Howdy!"))
+    #bot.reply_to(message, welcome_message)
+
+    chat_id = message.chat.id
+    username = get_username_from_storage(chat_id)
+    if username is None: # if the username does not exist in our database
+        print("UNAME NONE")
+        username = message.chat.username
+        first_name = message.chat.first_name
+        uname = username if username is not None else first_name
+        save_chat_id(chat_id, uname)
+    reply = _("Hello {0}, how are you?").format(uname)
+
+    bot.reply_to(message, reply)
 
 # start
 @bot.message_handler(regexp='/fid_.{6}')
 def filmDetail(message):
     '''This handlert shows the detailed film.'''
-    print("FUNCTION: {0} : USER: {1}".format('aFilm',message.from_user.username))
+    print("FUNCTION: {0} : USER: {1}".format('aFilm',message.chat.id))
     chat_id = message.chat.id
     films = load_from_JSON()
 
@@ -222,6 +299,7 @@ def command_tomorrow(message):
 # any day
 @bot.message_handler(commands=['day','día'])
 def command_day(message):
+
     '''
     Show films of a given day (numeric).
     '''
@@ -291,5 +369,8 @@ def command_top10(message):
 
     else:
         bot.send_message(chat_id, _("Invalid command"))
+
+
+on_start('activeSessions')
 
 bot.polling()

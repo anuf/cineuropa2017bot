@@ -8,3 +8,6 @@ cineuropa2017_token.py
 # temporal files for development
 cineuropa2015.txt
 cineuropa2016.txt
+
+# ActiveSessions file
+activeSessions
