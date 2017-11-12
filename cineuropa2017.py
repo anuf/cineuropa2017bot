@@ -48,19 +48,16 @@ Now I'm alive again! Please count on me.").format(v)
 # Some functions taken from:
 # https://github.com/eternnoir/pyTelegramBotAPI/blob/master/examples/deep_linking.py
 def extract_unique_code(message):
-    #return
     # Extracts the unique_code from the sent /start command.
     return message.chat.id#text.split()[1] if len(text.split()) > 1 else None
 
 def in_storage(unique_code):
-    #return
     # Should check if a unique code exists in storage
     with open('activeSessions' ,'r') as storageFile:
         d = json.load(storageFile)
     return unique_code in d.keys()
 
 def get_username_from_storage(unique_code):
-    #return
     # Does a query to the storage, retrieving the associated username
     if os.stat("activeSessions").st_size == 0:
         return None
@@ -70,7 +67,6 @@ def get_username_from_storage(unique_code):
         return d[unique_code] if in_storage(unique_code) else None
 
 def save_chat_id(chat_id, uname):
-    #return
     # Save the chat_id->username to storage
     try:
         if os.stat("activeSessions").st_size == 0:
@@ -170,25 +166,21 @@ def test_callback(call):
 @bot.message_handler(commands=['start','inicio'])
 def send_welcome(message):
     '''This handlert shows a welcome message.'''
-    print(message)
-    print("chatID: {0}".format(message.chat.id))
-    print("fromUSERID: {0}".format(message.from_user.id))
-    print("entitiesType: {0}".format(message.entities[0].type))
-
-    print("FUNCTION: {0} : USER: {1}".format('send_welcome',message.chat.id))
 
     #welcome_message = "{0} {1}. {2}".format(_("Hello"),message.from_user.first_name,_("Howdy!"))
     #bot.reply_to(message, welcome_message)
 
     chat_id = message.chat.id
-    username = get_username_from_storage(chat_id)
-    if username is None: # if the username does not exist in our database
-        print("UNAME NONE")
+    print("FUNCTION: {0} : USER: {1}".format('send_welcome',chat_id))
+
+    name_to_show = get_username_from_storage(chat_id)
+    if name_to_show is None: # if the username does not exist in our database
         username = message.chat.username
         first_name = message.chat.first_name
-        uname = username if username is not None else first_name
-        save_chat_id(chat_id, uname)
-    reply = _("Hello {0}, how are you?").format(uname)
+        name_to_show = first_name
+        save_chat_id(chat_id, first_name)
+
+    reply = _("Hello {0}, how are you?").format(name_to_show)
 
     bot.reply_to(message, reply)
 
