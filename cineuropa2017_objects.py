@@ -91,6 +91,7 @@ class FilmObject(object):
             _("Place"), theSession.place, _("Rate"), self.rate, _("Next sessions"), nextSessions,
             _("More"), "/fid_"+theSession.id[0:6])
 
+
     def toDetail(self, aDate):
         # A film only is shown in a session at a given day
         # TODO: Add Poster

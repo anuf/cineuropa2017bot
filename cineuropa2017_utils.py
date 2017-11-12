@@ -340,9 +340,34 @@ def parseFromTxt(aFilename):
 
     print("Films stored in JSON base: OK")
 
+def update_allfilms():
+    '''Updates film sessions with contetnts of the updated.json file'''
+
+    with open('allfilms.json','r') as allfilmsFile:
+        allfilms = json.load(allfilmsFile)
+        print(type(allfilms))
+
+    with open('updated.json','r') as updatedFile:
+        updated = json.load(updatedFile)
+        print(type(updated))
+
+    for u in updated:
+        try:
+            ind = [x['id'] for x in allfilms].index(u['id'])
+            allfilms[ind]['sessions'] = u['sessions']
+        except:
+            print("NEW FILM FOUND: {0}".format(u['title']))
+            allfilms.append(u)
+
+    with open('allfilms_tmp.json','w') as outFile:
+        json.dump([elem for elem in allfilms], outFile, indent=4)
+
+
 if __name__=="__main__":
     url = 'http://www.cineuropa.gal/2017/programa'
     # Basic html content on 7/11 from site
-    parseFromTxt("program.txt")
+    # parseFromTxt("program.txt")
     # Updates from URL
-    parseMainFromURL(url)
+    # parseMainFromURL(url)
+
+    update_allfilms()

@@ -389,7 +389,6 @@ def command_myvotes(message):
     else:
         bot.send_message(chat_id, _("Invalid command"))
 
-
 on_start('activeSessions')
 
 bot.polling()
