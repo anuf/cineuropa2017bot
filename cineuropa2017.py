@@ -226,9 +226,9 @@ def command_help(message):
     '''
     Display the commands and what are they intended for.
     '''
-    print("FUNCTION: {0} : USER: {1}".format('command_help',message.from_user.username))
-
     chat_id = message.chat.id
+    print("FUNCTION: {0} : USER: {1}".format('command_help',chat_id))
+
     help_text = _("Available commands: \n")
     for key in commands:  # generate help text out of the commands dictionary defined at the top
         help_text += "/" + key + ": "
@@ -246,9 +246,9 @@ def command_today(message):
     '''
     Show today's films.
     '''
-    print("FUNCTION: {0} : USER: {1}".format('command_today',message.from_user.username))
 
     chat_id = message.chat.id
+    print("FUNCTION: {0} : USER: {1}".format('command_today',chat_id))
     day = datetime.date.today().day
     films = load_from_JSON()
 
@@ -269,9 +269,9 @@ def command_tomorrow(message):
     '''
     Show tomorrow's films.
     '''
-    print("FUNCTION: {0} : USER: {1}".format('command_tomorrow',message.from_user.username))
-
     chat_id = message.chat.id
+    print("FUNCTION: {0} : USER: {1}".format('command_tomorrow',chat_id))
+
     tomorrow = datetime.date.today()+datetime.timedelta(days=1)
     day = tomorrow.day
 
@@ -295,9 +295,9 @@ def command_day(message):
     '''
     Show films of a given day (numeric).
     '''
-    print("FUNCTION: {0} : USER: {1}".format('command_day',message.from_user.username))
-
     chat_id = message.chat.id
+
+    print("FUNCTION: {0} : USER: {1}".format('command_day',chat_id))
 
     if len(message.text.split(" ")) > 1:
         day = message.text.split(" ")[1]
@@ -322,9 +322,8 @@ def command_top(message):
     '''
     Show n top rated films.
     '''
-    print("FUNCTION: {0} : USER: {1}".format('command_top',message.from_user.username))
-
     chat_id = message.chat.id
+    print("FUNCTION: {0} : USER: {1}".format('command_top',chat_id))
 
     if len(message.text.split(" ")) > 1:
         n = message.text.split(" ")[1]
@@ -346,9 +345,8 @@ def command_top10(message):
     '''
     Show top 10 rated films.
     '''
-    print("FUNCTION: {0} : USER: {1}".format('command_top10',message.from_user.username))
-
     chat_id = message.chat.id
+    print("FUNCTION: {0} : USER: {1}".format('command_top10',chat_id))
 
     if len(message.text.split(" ")) == 1:
         sessions = load_from_JSON()
