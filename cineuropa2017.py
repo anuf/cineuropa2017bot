@@ -203,27 +203,34 @@ def filmDetail(message):
                 theFilm = film.toDetail(session.date)
                 thePoster = film.poster
                 theFilmId = film.id
+                theFilmRates = film.rates
                 break
-    caption = _('Do you want to vote?')
+    print(theFilmRates)
+    voters = [x[0] for x in theFilmRates] if len(theFilmRates) > 0 else None
+    if voters is None or chat_id not in voters:
+        caption = _('Do you want to vote?')
 
-    # define keyboard
-    voteKeyboard = tb.types.InlineKeyboardMarkup()
-    voteKeyboard.add(tb.types.InlineKeyboardButton("10",callback_data = "{0}:{1}".format(10,theFilmId)),
-        tb.types.InlineKeyboardButton("9",callback_data = "{0}:{1}".format(9,theFilmId)),
-        tb.types.InlineKeyboardButton("8",callback_data = "{0}:{1}".format(8,theFilmId)),
-        tb.types.InlineKeyboardButton("7",callback_data = "{0}:{1}".format(7,theFilmId)),
-        tb.types.InlineKeyboardButton("6",callback_data = "{0}:{1}".format(6,theFilmId)),
-        tb.types.InlineKeyboardButton("5",callback_data = "{0}:{1}".format(5,theFilmId)),
-        tb.types.InlineKeyboardButton("4",callback_data = "{0}:{1}".format(4,theFilmId)),
-        tb.types.InlineKeyboardButton("3",callback_data = "{0}:{1}".format(3,theFilmId)),
-        tb.types.InlineKeyboardButton("2",callback_data = "{0}:{1}".format(2,theFilmId)),
-        tb.types.InlineKeyboardButton("1",callback_data = "{0}:{1}".format(1,theFilmId)),
-        tb.types.InlineKeyboardButton("0",callback_data = "{0}:{1}".format(0,theFilmId)),
-        tb.types.InlineKeyboardButton(_("Cancel"),callback_data = "CANCEL"))
+        # define keyboard
+        voteKeyboard = tb.types.InlineKeyboardMarkup()
+        voteKeyboard.add(tb.types.InlineKeyboardButton("10",callback_data = "{0}:{1}".format(10,theFilmId)),
+            tb.types.InlineKeyboardButton("9",callback_data = "{0}:{1}".format(9,theFilmId)),
+            tb.types.InlineKeyboardButton("8",callback_data = "{0}:{1}".format(8,theFilmId)),
+            tb.types.InlineKeyboardButton("7",callback_data = "{0}:{1}".format(7,theFilmId)),
+            tb.types.InlineKeyboardButton("6",callback_data = "{0}:{1}".format(6,theFilmId)),
+            tb.types.InlineKeyboardButton("5",callback_data = "{0}:{1}".format(5,theFilmId)),
+            tb.types.InlineKeyboardButton("4",callback_data = "{0}:{1}".format(4,theFilmId)),
+            tb.types.InlineKeyboardButton("3",callback_data = "{0}:{1}".format(3,theFilmId)),
+            tb.types.InlineKeyboardButton("2",callback_data = "{0}:{1}".format(2,theFilmId)),
+            tb.types.InlineKeyboardButton("1",callback_data = "{0}:{1}".format(1,theFilmId)),
+            tb.types.InlineKeyboardButton("0",callback_data = "{0}:{1}".format(0,theFilmId)),
+            tb.types.InlineKeyboardButton(_("Cancel"),callback_data = "CANCEL"))
 
-    bot.reply_to(message, theFilm, parse_mode='HTML')
-    bot.send_photo(chat_id, thePoster, caption = caption, reply_markup=voteKeyboard)
+        bot.reply_to(message, theFilm, parse_mode='HTML')
+        bot.send_photo(chat_id, thePoster, caption = caption, reply_markup=voteKeyboard)
 
+    else:
+        bot.reply_to(message, theFilm, parse_mode='HTML')
+        bot.send_photo(chat_id, thePoster)
 # help
 @bot.message_handler(commands=['help','axuda','ayuda'])
 def command_help(message):
@@ -385,6 +392,31 @@ def command_myvotes(message):
         else:
                 returnMessage += _("You haven't rated any film.")
         bot.send_message(chat_id, returnMessage, parse_mode='HTML')
+
+    else:
+        bot.send_message(chat_id, _("Invalid command"))
+
+@bot.message_handler(commands=['search','buscar'])
+def command_search(message):
+    '''Search in film title'''
+    chat_id = message.chat.id
+    print("FUNCTION: {0} : USER: {1}".format('command_myvotes',chat_id))
+
+    if len(message.text.split(" ")) > 1:
+        search_text = " ".join(message.text.split(" ")[1:])
+        films = load_from_JSON()
+        filmsMatch = [x for x in films if search_text.upper() in x.title.upper()]
+        print(len(filmsMatch))
+        for fm in filmsMatch:
+            print(fm.title)
+        # returnMessage = "********** {0} **********\n".format(_('MY RATINGS'))
+        # if len(sortedList) > 0:
+        #     listaEventos = [x.toTopListHTML() for x in sortedList]
+        #     for i in range(len(listaEventos)):
+        #         returnMessage += "{0}".format(listaEventos[i])
+        # else:
+        #         returnMessage += _("You haven't rated any film.")
+        # bot.send_message(chat_id, returnMessage, parse_mode='HTML')
 
     else:
         bot.send_message(chat_id, _("Invalid command"))
