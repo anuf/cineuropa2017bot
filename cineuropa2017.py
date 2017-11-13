@@ -17,7 +17,7 @@ import json
 import os
 import locale
 import hashlib
-
+import logging
 
 t = gettext.translation(
     'cineuropa2017', 'locale',
@@ -31,6 +31,11 @@ def on_start(aFilename):
     try:
         print("on_start()")
 
+        if not os.path.exists('cineuropa2017.log'):
+            logging.basicConfig(filename='cineuropa2017.log',level=logging.INFO,
+            format='%(asctime)s:%(levelname)s:%(message)s')
+
+        logging.info("Started")
         # Create a file to store sessions for push notifications if it does not
         # already exits
         if not os.path.exists(aFilename):
@@ -130,6 +135,8 @@ def test_callback(call):
 
     #print(call)
     print("FUNCTION: {0} : USER: {1}".format('test_callback',call.from_user.username))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'test_callback()'))
+
     if call.data != "CANCEL":
         print(call)
         # Rating
@@ -176,6 +183,7 @@ def send_welcome(message):
 
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('send_welcome',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'send_welcome()'))
 
     name_to_show = get_username_from_storage(chat_id)
     if name_to_show is None: # if the username does not exist in our database
@@ -194,6 +202,8 @@ def filmDetail(message):
     '''This handlert shows the detailed film.'''
     print("FUNCTION: {0} : USER: {1}".format('aFilm',message.chat.id))
     chat_id = message.chat.id
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'filmDetail()'))
+
     films = load_from_JSON()
 
     theFilm = _("No film found")
@@ -239,6 +249,7 @@ def command_help(message):
     '''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_help',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'help()'))
 
     help_text = _('Unofficial bot for Cineuropa#31 film festival (2017).')
     help_text += '\n'+_('Film information and unofficial rating.')
@@ -264,6 +275,7 @@ def command_today(message):
 
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_today',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_today()'))
     day = datetime.date.today().day
     films = load_from_JSON()
 
@@ -286,6 +298,7 @@ def command_tomorrow(message):
     '''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_tomorrow',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_tomorrow()'))
 
     tomorrow = datetime.date.today()+datetime.timedelta(days=1)
     day = tomorrow.day
@@ -313,6 +326,7 @@ def command_day(message):
     chat_id = message.chat.id
 
     print("FUNCTION: {0} : USER: {1}".format('command_day',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_day()'))
 
     if len(message.text.split(" ")) > 1:
         day = message.text.split(" ")[1]
@@ -339,6 +353,7 @@ def command_top(message):
     '''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_top',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_top()'))
 
     if len(message.text.split(" ")) > 1:
         n = message.text.split(" ")[1]
@@ -362,6 +377,7 @@ def command_top10(message):
     '''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_top10',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_top10()'))
 
     if len(message.text.split(" ")) == 1:
         sessions = load_from_JSON()
@@ -380,6 +396,7 @@ def command_myvotes(message):
     '''Show user's ratings'''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_myvotes',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_myvotes()'))
 
     if len(message.text.split(" ")) == 1:
         sessions = load_from_JSON()
@@ -401,14 +418,25 @@ def command_search(message):
     '''Search in film title'''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_myvotes',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_myvotes()'))
 
     if len(message.text.split(" ")) > 1:
+
         search_text = " ".join(message.text.split(" ")[1:])
+        print(search_text.upper())
         films = load_from_JSON()
         filmsMatch = [x for x in films if search_text.upper() in x.title.upper()]
-        print(len(filmsMatch))
-        for fm in filmsMatch:
-            print(fm.title)
+        if len(filmsMatch) > 0:
+            returnMessageItems = []
+            day = datetime.date.today().day
+            for fm in filmsMatch:
+                print(fm.title)
+                filmNextSessions = [x for x in fm.sessions if int(x.date.split(" ")[1]) >= day]
+                returnMessageItems.append('/fid_'+filmNextSessions[0].id[:6]+' :: '+fm.title)
+            bot.send_message(chat_id, "\n".join(returnMessageItems))
+        else:
+            bot.send_message(chat_id, _("No matches found for upcoming sessions."))
+            # bot.send_message(chat_id, fm.toSimple('Día {0} de novembro'.format(day)), parse_mode='HTML')
         # returnMessage = "********** {0} **********\n".format(_('MY RATINGS'))
         # if len(sortedList) > 0:
         #     listaEventos = [x.toTopListHTML() for x in sortedList]
