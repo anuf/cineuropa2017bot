@@ -260,14 +260,20 @@ def command_today(message):
     day = datetime.date.today().day
     films = load_from_JSON()
 
-    listaEventos = []
+    ulistaEventos = []
+    timeList = []
     for film in films:
         for y in film.sessions:
             if str(day) in y.date.split(' '):
-                listaEventos.append(film.toSimple('Día {0} de novembro'.format(day)))
+                ulistaEventos.append(film)
+                timeList.append(y.time)
 
-    if len(listaEventos) == 0:
+    if len(ulistaEventos) == 0:
         listaEventos = [_("No sessions today")]
+    else:
+        timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
+        listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+
     for ev in listaEventos:
         bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
 
@@ -285,14 +291,20 @@ def command_tomorrow(message):
 
     films = load_from_JSON()
 
-    listaEventos = []
+    ulistaEventos = []
+    timeList = []
     for film in films:
         for y in film.sessions:
             if str(day) in y.date.split(' '):
-                listaEventos.append(film.toSimple('Día {0} de novembro'.format(day)))
+                ulistaEventos.append(film)
+                timeList.append(y.time)
 
-    if len(listaEventos) == 0:
+    if len(ulistaEventos) == 0:
         listaEventos = [_("No sessions tomorrow")]
+    else:
+        timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
+        listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+
     for ev in listaEventos:
         bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
 
@@ -311,14 +323,20 @@ def command_day(message):
         day = message.text.split(" ")[1]
         films = load_from_JSON()
 
-        listaEventos = []
+        ulistaEventos = []
+        timeList = []
         for film in films:
             for y in film.sessions:
                 if str(day) in y.date.split(' '):
-                    listaEventos.append(film.toSimple('Día {0} de novembro'.format(day)))
+                    ulistaEventos.append(film)
+                    timeList.append(y.time)
 
-        if len(listaEventos) == 0:
-            listaEventos = [_("No sessions today")]
+        if len(ulistaEventos) == 0:
+            listaEventos = [_("No sessions this day")]
+        else:
+            timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
+            listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+
         for ev in listaEventos:
             bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
 
