@@ -143,7 +143,7 @@ def parseMainFromURL(url):
                 #     sys.out()
 
                 # times
-                times = [re.findall('\d{2}:\d{2}|DE SEGUIDO',str(hhmm)) for hhmm in p if 'Nota do público' not in str(p)]
+                times = [re.findall('\d{2}:\d{2}|DE SEGUIDO',str(hhmm)) for hhmm in p if 'Nota do público' not in str(hhmm)]
                 # titles
                 titles = []
                 years = []
@@ -366,6 +366,6 @@ if __name__=="__main__":
     # Basic html content on 7/11 from site
     #parseFromTxt("program.txt")
     # Obtain updates from URL to updated.json file
-    #parseMainFromURL(url)
+    parseMainFromURL(url)
     # update existing sessions in allfilms.json
-    update_allfilms()
+    #update_allfilms()
