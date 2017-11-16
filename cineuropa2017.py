@@ -387,16 +387,43 @@ def command_top10(message):
     else:
         bot.send_message(chat_id, _("Invalid command"))
 
-@bot.message_handler(commands=['myratings','mispuntuaciones','asmiñaspuntuacions'])
-def command_myvotes(message):
-    '''Show user's ratings'''
+@bot.message_handler(commands=['myrates','mispuntuaciones','asmiñaspuntuacions'])
+def command_myrates(message):
+    '''Show user's rates'''
     chat_id = message.chat.id
-    print("FUNCTION: {0} : USER: {1}".format('command_myvotes',chat_id))
+    print("FUNCTION: {0} : USER: {1}".format('command_myrates',chat_id))
+
+    if len(message.text.split(" ")) == 1:
+        films = load_from_JSON()
+        myRatedList = [x for x in films if chat_id in [y[0] for y in x.rates]]
+        pairs = []
+        for ratedFilm in myRatedList:
+            for rate in ratedFilm.rates:
+                if rate[0] == chat_id:
+                    pairs.append((rate[1], ratedFilm.title))
+
+        returnMessage = "********** {0} **********\n".format(_('MY RATES'))
+        if len(pairs) > 0:
+            sortedList = sorted(pairs, key = lambda x: x[0], reverse=True)
+            for elem in sortedList:
+                returnMessage += "<b>{0}:</b>{1}\n".format(elem[0], elem[1])
+        else:
+            returnMessage += _("You haven't rated any film.")
+        bot.send_message(chat_id, returnMessage, parse_mode='HTML')
+
+    else:
+        bot.send_message(chat_id, _("Invalid command"))
+
+@bot.message_handler(commands=['myratedfilms','mispeliculaspuntuadas','asmiñaspeliculaspuntuadas'])
+def command_myratedfilms(message):
+    '''Show user's rated films'''
+    chat_id = message.chat.id
+    print("FUNCTION: {0} : USER: {1}".format('command_myratedfilms',chat_id))
 
     if len(message.text.split(" ")) == 1:
         sessions = load_from_JSON()
         sortedList = sorted([x for x in sessions if chat_id in [y[0] for y in x.rates]], key = lambda x: x.rate, reverse=True)
-        returnMessage = "********** {0} **********\n".format(_('MY RATINGS'))
+        returnMessage = "****** {0} ******\n".format(_('MY RATED FILMS'))
         if len(sortedList) > 0:
             listaEventos = [x.toTopListHTML() for x in sortedList]
             for i in range(len(listaEventos)):
