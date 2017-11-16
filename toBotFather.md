@@ -1,3 +1,14 @@
+# Name
+Cineuropa2017Bot
+
+# Description
+Unofficial bot for Cineuropa#31 film festival (2017). Provides film information
+and unofficial rating. No responsibility on information veracity.
+
+# About
+Unofficial bot for Cineuropa#31 film festival (2017). Provides film information
+and unofficial rating. No responsibility on information veracity.
+
 # Commands list
 day - Shows films for day n
 
@@ -16,7 +27,3 @@ tomorrow - Shows films for tomorrow
 top - Lists n top rated films
 
 top10 - Lists top 10 rated films
-
-# About
-Unofficial bot for Cineuropa#31 film festival (2017). Provides film information
-and unofficial rating. No responsibility on information veracity.
