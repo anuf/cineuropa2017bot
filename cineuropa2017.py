@@ -76,7 +76,8 @@ def save_chat_id(chat_id, uname):
             with open('activeSessions' ,'r') as storageFile:
                 d = json.load(storageFile)
 
-        d[chat_id] = uname
+        d[str(chat_id)] = uname
+
         with open('activeSessions' ,'w') as storageFile:
             json.dump(d, storageFile)
     except Exception as e:
