@@ -11,3 +11,6 @@ cineuropa2016.txt
 
 # ActiveSessions file
 activeSessions
+
+# environment
+.python-version
