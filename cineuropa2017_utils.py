@@ -376,6 +376,6 @@ if __name__=="__main__":
     # Basic html content on 7/11 from site
     #parseFromTxt("program.txt")
     # Obtain updates from URL to updated.json file
-    #parseMainFromURL(url)
+    parseMainFromURL(url)
     # update existing sessions in allfilms.json
-    update_allfilms()
+    #update_allfilms()
