@@ -40,8 +40,9 @@ def on_start(aFilename):
             with open(aFilename,'r') as fname:
                 d = json.load(fname)
                 for k, v in d.items():
-                    apologize_text = _("Hi {0}!, I'm sorry I have been out of coverage. \
-Now I'm alive again! Please count on me.").format(v)
+                    apologize_text = _("Hi {0}!, I'm sorry I have been out of \
+coverage for a while. Possibly updating something. Anyway, now I'm alive again! \
+Please count on me.").format(v)
                     bot.send_message(k,apologize_text)
     except Exception as e:
         print("Error on_start(): {0}".format(e))
