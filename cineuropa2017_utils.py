@@ -143,7 +143,17 @@ def parseMainFromURL(url):
                 #     sys.out()
 
                 # times
-                times = [re.findall('\d{2}:\d{2}|DE SEGUIDO',str(hhmm)) for hhmm in p if 'Nota do público' not in str(p)]
+                times = [re.findall('\d{2}:\d{2}|DE SEGUIDO',str(hhmm)) for hhmm in p if 'Nota do público' not in str(hhmm)]
+
+                # Update times with "DE SEGUIDO label, adding last time"
+                last_time = ""
+                for t in times:
+                    if t[0] != 'DE SEGUIDO':
+                        last_time = t[0]
+                    else:
+                        t[0] = " - ".join([last_time, t[0]])
+                        last_time = t[0][0:6]
+
                 # titles
                 titles = []
                 years = []
@@ -345,11 +355,9 @@ def update_allfilms():
 
     with open('allfilms.json','r') as allfilmsFile:
         allfilms = json.load(allfilmsFile)
-        print(type(allfilms))
 
     with open('updated.json','r') as updatedFile:
         updated = json.load(updatedFile)
-        print(type(updated))
 
     for u in updated:
         try:
@@ -359,15 +367,15 @@ def update_allfilms():
             print("NEW FILM FOUND: {0}".format(u['title']))
             allfilms.append(u)
 
-    with open('allfilms_tmp.json','w') as outFile:
+    with open('allfilms.json','w') as outFile:
         json.dump([elem for elem in allfilms], outFile, indent=4)
 
 
 if __name__=="__main__":
     url = 'http://www.cineuropa.gal/2017/programa'
     # Basic html content on 7/11 from site
-    # parseFromTxt("program.txt")
-    # Updates from URL
-    # parseMainFromURL(url)
-
-    update_allfilms()
+    #parseFromTxt("program.txt")
+    # Obtain updates from URL to updated.json file
+    parseMainFromURL(url)
+    # update existing sessions in allfilms.json
+    #update_allfilms()

@@ -17,7 +17,7 @@ import json
 import os
 import locale
 import hashlib
-
+import logging
 
 t = gettext.translation(
     'cineuropa2017', 'locale',
@@ -31,6 +31,11 @@ def on_start(aFilename):
     try:
         print("on_start()")
 
+        if not os.path.exists('cineuropa2017.log'):
+            logging.basicConfig(filename='cineuropa2017.log',level=logging.INFO,
+            format='%(asctime)s:%(levelname)s:%(message)s')
+
+        logging.info("Started")
         # Create a file to store sessions for push notifications if it does not
         # already exits
         if not os.path.exists(aFilename):
@@ -40,8 +45,9 @@ def on_start(aFilename):
             with open(aFilename,'r') as fname:
                 d = json.load(fname)
                 for k, v in d.items():
-                    apologize_text = _("Hi {0}!, I'm sorry I have been out of coverage. \
-Now I'm alive again! Please count on me.").format(v)
+                    apologize_text = _("Hi {0}!, I'm sorry I have been out of \
+coverage for a while. Possibly updating something. Anyway, now I'm alive again! \
+Please count on me.").format(v)
                     bot.send_message(k,apologize_text)
     except Exception as e:
         print("Error on_start(): {0}".format(e))
@@ -130,6 +136,8 @@ def test_callback(call):
 
     #print(call)
     print("FUNCTION: {0} : USER: {1}".format('test_callback',call.from_user.username))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'test_callback()'))
+
     if call.data != "CANCEL":
         print(call)
         # Rating
@@ -176,6 +184,7 @@ def send_welcome(message):
 
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('send_welcome',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'send_welcome()'))
 
     name_to_show = get_username_from_storage(chat_id)
     if name_to_show is None: # if the username does not exist in our database
@@ -194,6 +203,8 @@ def filmDetail(message):
     '''This handlert shows the detailed film.'''
     print("FUNCTION: {0} : USER: {1}".format('aFilm',message.chat.id))
     chat_id = message.chat.id
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'filmDetail()'))
+
     films = load_from_JSON()
 
     theFilm = _("No film found")
@@ -203,27 +214,34 @@ def filmDetail(message):
                 theFilm = film.toDetail(session.date)
                 thePoster = film.poster
                 theFilmId = film.id
+                theFilmRates = film.rates
                 break
-    caption = _('Do you want to vote?')
+    print(theFilmRates)
+    voters = [x[0] for x in theFilmRates] if len(theFilmRates) > 0 else None
+    if voters is None or chat_id not in voters:
+        caption = _('Do you want to vote?')
 
-    # define keyboard
-    voteKeyboard = tb.types.InlineKeyboardMarkup()
-    voteKeyboard.add(tb.types.InlineKeyboardButton("10",callback_data = "{0}:{1}".format(10,theFilmId)),
-        tb.types.InlineKeyboardButton("9",callback_data = "{0}:{1}".format(9,theFilmId)),
-        tb.types.InlineKeyboardButton("8",callback_data = "{0}:{1}".format(8,theFilmId)),
-        tb.types.InlineKeyboardButton("7",callback_data = "{0}:{1}".format(7,theFilmId)),
-        tb.types.InlineKeyboardButton("6",callback_data = "{0}:{1}".format(6,theFilmId)),
-        tb.types.InlineKeyboardButton("5",callback_data = "{0}:{1}".format(5,theFilmId)),
-        tb.types.InlineKeyboardButton("4",callback_data = "{0}:{1}".format(4,theFilmId)),
-        tb.types.InlineKeyboardButton("3",callback_data = "{0}:{1}".format(3,theFilmId)),
-        tb.types.InlineKeyboardButton("2",callback_data = "{0}:{1}".format(2,theFilmId)),
-        tb.types.InlineKeyboardButton("1",callback_data = "{0}:{1}".format(1,theFilmId)),
-        tb.types.InlineKeyboardButton("0",callback_data = "{0}:{1}".format(0,theFilmId)),
-        tb.types.InlineKeyboardButton(_("Cancel"),callback_data = "CANCEL"))
+        # define keyboard
+        voteKeyboard = tb.types.InlineKeyboardMarkup()
+        voteKeyboard.add(tb.types.InlineKeyboardButton("10",callback_data = "{0}:{1}".format(10,theFilmId)),
+            tb.types.InlineKeyboardButton("9",callback_data = "{0}:{1}".format(9,theFilmId)),
+            tb.types.InlineKeyboardButton("8",callback_data = "{0}:{1}".format(8,theFilmId)),
+            tb.types.InlineKeyboardButton("7",callback_data = "{0}:{1}".format(7,theFilmId)),
+            tb.types.InlineKeyboardButton("6",callback_data = "{0}:{1}".format(6,theFilmId)),
+            tb.types.InlineKeyboardButton("5",callback_data = "{0}:{1}".format(5,theFilmId)),
+            tb.types.InlineKeyboardButton("4",callback_data = "{0}:{1}".format(4,theFilmId)),
+            tb.types.InlineKeyboardButton("3",callback_data = "{0}:{1}".format(3,theFilmId)),
+            tb.types.InlineKeyboardButton("2",callback_data = "{0}:{1}".format(2,theFilmId)),
+            tb.types.InlineKeyboardButton("1",callback_data = "{0}:{1}".format(1,theFilmId)),
+            tb.types.InlineKeyboardButton("0",callback_data = "{0}:{1}".format(0,theFilmId)),
+            tb.types.InlineKeyboardButton(_("Cancel"),callback_data = "CANCEL"))
 
-    bot.reply_to(message, theFilm, parse_mode='HTML')
-    bot.send_photo(chat_id, thePoster, caption = caption, reply_markup=voteKeyboard)
+        bot.reply_to(message, theFilm, parse_mode='HTML')
+        bot.send_photo(chat_id, thePoster, caption = caption, reply_markup=voteKeyboard)
 
+    else:
+        bot.reply_to(message, theFilm, parse_mode='HTML')
+        bot.send_photo(chat_id, thePoster)
 # help
 @bot.message_handler(commands=['help','axuda','ayuda'])
 def command_help(message):
@@ -232,6 +250,7 @@ def command_help(message):
     '''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_help',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'help()'))
 
     help_text = _('Unofficial bot for Cineuropa#31 film festival (2017).')
     help_text += '\n'+_('Film information and unofficial rating.')
@@ -257,17 +276,24 @@ def command_today(message):
 
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_today',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_today()'))
     day = datetime.date.today().day
     films = load_from_JSON()
 
-    listaEventos = []
+    ulistaEventos = []
+    timeList = []
     for film in films:
         for y in film.sessions:
             if str(day) in y.date.split(' '):
-                listaEventos.append(film.toSimple('Día {0} de novembro'.format(day)))
+                ulistaEventos.append(film)
+                timeList.append(y.time)
 
-    if len(listaEventos) == 0:
+    if len(ulistaEventos) == 0:
         listaEventos = [_("No sessions today")]
+    else:
+        timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
+        listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+
     for ev in listaEventos:
         bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
 
@@ -279,20 +305,27 @@ def command_tomorrow(message):
     '''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_tomorrow',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_tomorrow()'))
 
     tomorrow = datetime.date.today()+datetime.timedelta(days=1)
     day = tomorrow.day
 
     films = load_from_JSON()
 
-    listaEventos = []
+    ulistaEventos = []
+    timeList = []
     for film in films:
         for y in film.sessions:
             if str(day) in y.date.split(' '):
-                listaEventos.append(film.toSimple('Día {0} de novembro'.format(day)))
+                ulistaEventos.append(film)
+                timeList.append(y.time)
 
-    if len(listaEventos) == 0:
+    if len(ulistaEventos) == 0:
         listaEventos = [_("No sessions tomorrow")]
+    else:
+        timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
+        listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+
     for ev in listaEventos:
         bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
 
@@ -306,19 +339,26 @@ def command_day(message):
     chat_id = message.chat.id
 
     print("FUNCTION: {0} : USER: {1}".format('command_day',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_day()'))
 
     if len(message.text.split(" ")) > 1:
         day = message.text.split(" ")[1]
         films = load_from_JSON()
 
-        listaEventos = []
+        ulistaEventos = []
+        timeList = []
         for film in films:
             for y in film.sessions:
                 if str(day) in y.date.split(' '):
-                    listaEventos.append(film.toSimple('Día {0} de novembro'.format(day)))
+                    ulistaEventos.append(film)
+                    timeList.append(y.time)
 
-        if len(listaEventos) == 0:
-            listaEventos = [_("No sessions today")]
+        if len(ulistaEventos) == 0:
+            listaEventos = [_("No sessions this day")]
+        else:
+            timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
+            listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+
         for ev in listaEventos:
             bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
 
@@ -332,6 +372,7 @@ def command_top(message):
     '''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_top',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_top()'))
 
     if len(message.text.split(" ")) > 1:
         n = message.text.split(" ")[1]
@@ -355,6 +396,7 @@ def command_top10(message):
     '''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_top10',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_top10()'))
 
     if len(message.text.split(" ")) == 1:
         sessions = load_from_JSON()
@@ -373,6 +415,7 @@ def command_myvotes(message):
     '''Show user's ratings'''
     chat_id = message.chat.id
     print("FUNCTION: {0} : USER: {1}".format('command_myvotes',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_myvotes()'))
 
     if len(message.text.split(" ")) == 1:
         sessions = load_from_JSON()
@@ -385,6 +428,42 @@ def command_myvotes(message):
         else:
                 returnMessage += _("You haven't rated any film.")
         bot.send_message(chat_id, returnMessage, parse_mode='HTML')
+
+    else:
+        bot.send_message(chat_id, _("Invalid command"))
+
+@bot.message_handler(commands=['search','buscar'])
+def command_search(message):
+    '''Search in film title'''
+    chat_id = message.chat.id
+    print("FUNCTION: {0} : USER: {1}".format('command_myvotes',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_myvotes()'))
+
+    if len(message.text.split(" ")) > 1:
+
+        search_text = " ".join(message.text.split(" ")[1:])
+        print(search_text.upper())
+        films = load_from_JSON()
+        filmsMatch = [x for x in films if search_text.upper() in x.title.upper()]
+        if len(filmsMatch) > 0:
+            returnMessageItems = []
+            day = datetime.date.today().day
+            for fm in filmsMatch:
+                print(fm.title)
+                filmNextSessions = [x for x in fm.sessions if int(x.date.split(" ")[1]) >= day]
+                returnMessageItems.append('/fid_'+filmNextSessions[0].id[:6]+' :: '+fm.title)
+            bot.send_message(chat_id, "\n".join(returnMessageItems))
+        else:
+            bot.send_message(chat_id, _("No matches found for upcoming sessions."))
+            # bot.send_message(chat_id, fm.toSimple('Día {0} de novembro'.format(day)), parse_mode='HTML')
+        # returnMessage = "********** {0} **********\n".format(_('MY RATINGS'))
+        # if len(sortedList) > 0:
+        #     listaEventos = [x.toTopListHTML() for x in sortedList]
+        #     for i in range(len(listaEventos)):
+        #         returnMessage += "{0}".format(listaEventos[i])
+        # else:
+        #         returnMessage += _("You haven't rated any film.")
+        # bot.send_message(chat_id, returnMessage, parse_mode='HTML')
 
     else:
         bot.send_message(chat_id, _("Invalid command"))
