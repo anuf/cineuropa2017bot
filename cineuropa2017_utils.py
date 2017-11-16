@@ -189,7 +189,10 @@ def parseMainFromURL(url):
                     duration = dur.group()[1:-1].strip() if dur is not None else ''
                     theTime = times[i][0]
                     # SESSION OBJECT
-                    ssObjectIdString = theDay+thePlace+theTime
+                    if 'DE SEGUIDO' in theTime:
+                        ssObjectIdString = theDay+thePlace+'DE SEGUIDO'
+                    else:
+                        ssObjectIdString = theDay+thePlace+theTime
                     ssObjectId = hashlib.md5(ssObjectIdString.encode('utf-8')).hexdigest()
                     so = SessionObject(ssObjectId, theDay, thePlace, theTime)
 

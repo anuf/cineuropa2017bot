@@ -12,5 +12,8 @@ cineuropa2016.txt
 # ActiveSessions file
 activeSessions
 
+# environments
+.python-version
+
 # Logger
 cineuropa2017.log
