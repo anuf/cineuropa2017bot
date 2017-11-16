@@ -143,7 +143,17 @@ def parseMainFromURL(url):
                 #     sys.out()
 
                 # times
-                times = [re.findall('\d{2}:\d{2}|DE SEGUIDO',str(hhmm)) for hhmm in p if 'Nota do público' not in str(p)]
+                times = [re.findall('\d{2}:\d{2}|DE SEGUIDO',str(hhmm)) for hhmm in p if 'Nota do público' not in str(hhmm)]
+
+                # Update times with "DE SEGUIDO label, adding last time"
+                last_time = ""
+                for t in times:
+                    if t[0] != 'DE SEGUIDO':
+                        last_time = t[0]
+                    else:
+                        t[0] = " - ".join([last_time, t[0]])
+                        last_time = t[0][0:6]
+
                 # titles
                 titles = []
                 years = []
