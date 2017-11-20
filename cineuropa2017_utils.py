@@ -131,9 +131,18 @@ def parseFromURL(url):
         info = h4s[0].text
         synopsis = h4s[-1].text
 
+    try:
+        soup3 = BeautifulSoup(strRows[2], "lxml")
+        h4s3 = soup3.find_all('h4')
+        h4s3_title = h4s3[0].text
+        critica_cineuropa = h4s3[1].text
+    except IndexError:
+        critica_cineuropa = ''
+
+
     else:
         print("STATUS: "+str(urlopen(req).status))
-    return synopsis, info
+    return synopsis, info, critica_cineuropa
 
 def parseMainFromURL(url):
     allfilms = []
@@ -221,9 +230,8 @@ def parseMainFromURL(url):
                 # print(details)
 
                 for i in range(len(times)):
-
                     film_url = details[i]
-                    synopsis, info = parseFromURL(film_url)
+                    synopsis, info, critica_cineuropa = parseFromURL(film_url)
                     # extract from info
                     gen  = re.search('experimental|videoarte|documental|ficción|drama', info.lower())
                     gender = gen.group() if gen is not None else ''
@@ -358,7 +366,7 @@ def parseFromTxt(aFilename):
             for i in range(len(times)):
 
                 film_url = details[i]
-                synopsis, info = parseFromURL(film_url)
+                synopsis, info, critica_cineuropa = parseFromURL(film_url)
                 # extract from info
                 gen  = re.search('experimental|videoarte|documental|ficción|drama', info.lower())
                 gender = gen.group() if gen is not None else ''
