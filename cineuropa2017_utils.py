@@ -99,7 +99,9 @@ def object2film(anObject):
     sessionsList = [object2session(x) for x in anObject['sessions']]
     ratesList = anObject['rates']
     return FilmObject(id=anObject['id'], title=anObject['title'],
-        synopsis=anObject['synopsis'], year=anObject['year'],
+        synopsis=anObject['synopsis'],
+        critica_cineuropa=anObject['critica_cineuropa'],
+        year=anObject['year'],
         director=anObject['director'], poster=anObject['poster'],
         rate=anObject['rate'],rates=ratesList,
         sessions=sessionsList)
@@ -274,6 +276,7 @@ def parseMainFromURL(url):
                             director = theDirector,
                             poster = thePoster,
                             synopsis = synopsis,
+                            critica_cineuropa = critica_cineuropa,
                             duration = duration,
                             rate = 0,
                             rates = [],
@@ -296,7 +299,7 @@ def parseMainFromURL(url):
         print("Films stored in updated JSON: OK")
     else:
         print("STATUS: "+str(urlopen(req).status))
-    return synopsis, info
+    return synopsis, info, critica_cineuropa
 
 def parseFromTxt(aFilename):
     allfilms = []
@@ -396,6 +399,7 @@ def parseFromTxt(aFilename):
                         director = theDirector,
                         poster = thePoster,
                         synopsis = synopsis,
+                        critica_cineuropa = critica_cineuropa,
                         duration = duration,
                         rate = 0,
                         rates = [],
