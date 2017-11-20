@@ -18,8 +18,5 @@ activeSessions
 # Logger
 cineuropa2017.log
 
-# output
-updated.json
-
 # backup (and temporary) files
 backup/
