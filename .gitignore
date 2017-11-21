@@ -17,3 +17,6 @@ activeSessions
 
 # Logger
 cineuropa2017.log
+
+# backup (and temporary) files
+backup/

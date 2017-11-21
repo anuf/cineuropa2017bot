@@ -27,7 +27,7 @@ class FilmObject(object):
 
     def __init__(self, id ='', title='', year='',director='', poster = '',
         synopsis = '', duration = '', rate=None, rates = [], sessions = [],
-        url = '', gender = '', countries = ''):
+        url = '', gender = '', countries = '', critica_cineuropa = ''):
         self.id = id
         self.title = title
         self.year = year
@@ -41,6 +41,7 @@ class FilmObject(object):
         self.url = url
         self.gender = gender
         self.countries = countries
+        self.critica_cineuropa = critica_cineuropa
 
     def addSession(self, aSession):
         self.sessions.append(aSession)
@@ -106,7 +107,8 @@ class FilmObject(object):
                 _("Director"), self.director, _("Day"), theSession.date ,
                 _("Time"), theSession.time, _("Place"), theSession.place,
                 _("Rate"), self.rate, _("Next sessions"), nextSessions,
-                _("Synopsis"), self.synopsis)
+                _("Synopsis"), self.synopsis,
+                )
 
     def toHTML(self):
         # Calculate next sessions to show
@@ -124,7 +126,9 @@ class FilmObject(object):
     def toDict(self):
         return {"id" : self.id, "title" : self.title, "year" : self.year,
             "director" : self.director, "poster" : self.poster,
-            "synopsis": self.synopsis, "duration" : self.duration,
+            "synopsis": self.synopsis,
+            "critica_cineuropa": self.critica_cineuropa,
+            "duration" : self.duration,
             "rate" : self.rate, "rates" : self.rates,
             "sessions" : [x.toDict() for x in self.sessions],
             "url" : self.url, "gender" :  self.gender, "countries" : self.countries

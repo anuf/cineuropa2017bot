@@ -15,12 +15,56 @@ import gettext
 import random
 from cineuropa2017_objects import FilmObject, SessionObject
 import hashlib
+import re
+import datetime
+import dateutil.parser
+
 
 t = gettext.translation(
     'cineuropa2017_utils', 'locale',
     fallback=True,
 )
 _ = t
+
+def parse_duration(duration_str):
+    """Parse film duration from string (Cineuropa formtatted)."""
+    duration = duration_str.split(' ')[0]
+    if duration == '':
+        duration = 0
+    duration = int(duration)
+    return duration
+
+
+def get_time(time_string):
+    """Parse time from string."""
+    hh_mm_pattern = (r"""^\s*(?P<hour>\d?\d):(?P<minute>\d?\d)"""
+                     """(?P<de_seguido>\s+-\s+DE SEGUIDO)?""")
+    hh_mm = re.match(hh_mm_pattern, time_string)
+    return hh_mm
+
+
+def get_end_time(theDay='',
+                 theTime='',
+                 duration=None,
+                 prevEndTime=''):
+    """Compute the end time of a session."""
+    assert (bool(theDay and theTime and duration is not None)
+            != bool(prevEndTime and duration is not None))
+    if theDay and theTime and duration is not None:
+        hh_mm = get_time(theTime)
+        day_int = int(re.match(r"^D.a (\d+)", theDay).groups()[0])
+        start_datetime = datetime.datetime(year=2017,
+                                           month=11,
+                                           day=day_int,
+                                           hour=int(hh_mm.group('hour')),
+                                           minute=int(hh_mm.group('minute')))
+        end_datetime = (start_datetime +
+                        datetime.timedelta(minutes=parse_duration(duration)))
+    elif prevEndTime and duration is not None:
+        end_datetime = (dateutil.parser.parse(prevEndTime) +
+                        datetime.timedelta(minutes=parse_duration(duration)))
+    return end_datetime.isoformat()
+
 
 def cleanContent(pageContent):
     '''Remove undesired elements from list'''
@@ -55,7 +99,9 @@ def object2film(anObject):
     sessionsList = [object2session(x) for x in anObject['sessions']]
     ratesList = anObject['rates']
     return FilmObject(id=anObject['id'], title=anObject['title'],
-        synopsis=anObject['synopsis'], year=anObject['year'],
+        synopsis=anObject['synopsis'],
+        critica_cineuropa=anObject['critica_cineuropa'],
+        year=anObject['year'],
         director=anObject['director'], poster=anObject['poster'],
         rate=anObject['rate'],rates=ratesList,
         sessions=sessionsList)
@@ -87,9 +133,18 @@ def parseFromURL(url):
         info = h4s[0].text
         synopsis = h4s[-1].text
 
+    try:
+        soup3 = BeautifulSoup(strRows[2], "lxml")
+        h4s3 = soup3.find_all('h4')
+        h4s3_title = h4s3[0].text
+        critica_cineuropa = h4s3[1].text
+    except IndexError:
+        critica_cineuropa = ''
+
+
     else:
         print("STATUS: "+str(urlopen(req).status))
-    return synopsis, info
+    return synopsis, info, critica_cineuropa
 
 def parseMainFromURL(url):
     allfilms = []
@@ -177,9 +232,8 @@ def parseMainFromURL(url):
                 # print(details)
 
                 for i in range(len(times)):
-
                     film_url = details[i]
-                    synopsis, info = parseFromURL(film_url)
+                    synopsis, info, critica_cineuropa = parseFromURL(film_url)
                     # extract from info
                     gen  = re.search('experimental|videoarte|documental|ficción|drama', info.lower())
                     gender = gen.group() if gen is not None else ''
@@ -190,8 +244,18 @@ def parseMainFromURL(url):
                     theTime = times[i][0]
                     # SESSION OBJECT
                     if 'DE SEGUIDO' in theTime:
-                        ssObjectIdString = theDay+thePlace+'DE SEGUIDO'
+                        theStartTime = prevEndTime
+                        theEndTime = get_end_time(prevEndTime=prevEndTime,
+                                                  duration=duration)
+                        ssObjectIdString = theDay+thePlace+theStartTime
                     else:
+                        # hack to format theStartTime
+                        theStartTime = get_end_time(theDay=theDay,
+                                                    theTime=theTime,
+                                                    duration='0')
+                        theEndTime = get_end_time(theDay=theDay,
+                                                  theTime=theTime,
+                                                  duration=duration)
                         ssObjectIdString = theDay+thePlace+theTime
                     ssObjectId = hashlib.md5(ssObjectIdString.encode('utf-8')).hexdigest()
                     so = SessionObject(ssObjectId, theDay, thePlace, theTime)
@@ -212,6 +276,7 @@ def parseMainFromURL(url):
                             director = theDirector,
                             poster = thePoster,
                             synopsis = synopsis,
+                            critica_cineuropa = critica_cineuropa,
                             duration = duration,
                             rate = 0,
                             rates = [],
@@ -225,6 +290,7 @@ def parseMainFromURL(url):
                         indexFilmObject = [x.id for x in allfilms].index(filmObjectId)
                         fo = allfilms[indexFilmObject]
                         fo.addSession(so)
+                    prevEndTime = theEndTime
 
         # Save sessions to file
         with open('updated.json', 'w') as outputFile:
@@ -233,7 +299,7 @@ def parseMainFromURL(url):
         print("Films stored in updated JSON: OK")
     else:
         print("STATUS: "+str(urlopen(req).status))
-    return synopsis, info
+    return synopsis, info, critica_cineuropa
 
 def parseFromTxt(aFilename):
     allfilms = []
@@ -303,7 +369,7 @@ def parseFromTxt(aFilename):
             for i in range(len(times)):
 
                 film_url = details[i]
-                synopsis, info = parseFromURL(film_url)
+                synopsis, info, critica_cineuropa = parseFromURL(film_url)
                 # extract from info
                 gen  = re.search('experimental|videoarte|documental|ficción|drama', info.lower())
                 gender = gen.group() if gen is not None else ''
@@ -333,6 +399,7 @@ def parseFromTxt(aFilename):
                         director = theDirector,
                         poster = thePoster,
                         synopsis = synopsis,
+                        critica_cineuropa = critica_cineuropa,
                         duration = duration,
                         rate = 0,
                         rates = [],
