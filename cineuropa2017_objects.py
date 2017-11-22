@@ -54,6 +54,10 @@ class FilmObject(object):
     def getId(self):
         return self.id
 
+    def get_session_from_day(self, aDay):
+        theSession = [x for x in self.sessions if x.date.split(" ")[1] == str(aDay)][0]
+        return theSession
+
     # def show(self):
     #     return "{0}: {1}\n{2}: {3}\n{4}: {5}\n{6}: {7}\n{8}: {9}\n{10}: {11}\n{12}: {13}".format(
     # _("DAY"), self.day, _("PLACE"), self.place, _("TIME"), self.time,

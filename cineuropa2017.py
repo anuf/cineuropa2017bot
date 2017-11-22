@@ -496,6 +496,51 @@ def command_search(message):
     else:
         bot.send_message(chat_id, _("Invalid command"))
 
+@bot.inline_handler(lambda query: len(query.query) is 0)
+def default_query(inline_query):
+    try:
+        day = datetime.date.today().day
+        hour = datetime.datetime.now().time().hour
+        films = load_from_JSON()
+        ulistaEventos = []
+        timeList = []
+        for film in films:
+            for y in film.sessions:
+                if str(day) in y.date.split(' ') and (str(hour) <= y.time.split(':')[0]):
+                    ulistaEventos.append(film)
+                    timeList.append(y.time)
+
+        resultados = []
+        if len(ulistaEventos) == 0:
+            resultados.append(tb.types.InlineQueryResultCachedSticker('1',
+            'CAADAgADFQADyIsGAAHPdbDyCcpB8gI',
+            input_message_content=tb.types.InputTextMessageContent(_('Sorry, there are no films today'))))
+        else:
+
+            ind = 0
+            timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
+            for tInd in timeIndexes:
+                ind += 1
+                aFilm = ulistaEventos[tInd]
+                theSession = aFilm.get_session_from_day(day)
+                messageToSend = "<b>{0} ({1})</b>\n".format(aFilm.title, aFilm.year)
+                messageToSend += theSession.time + " - " + theSession.place + "\n" + aFilm.synopsis
+                resultados.append(tb.types.InlineQueryResultArticle(str(ind),
+                    "{0} ({1})".format(aFilm.title, aFilm.year),
+                    # tb.types.InputTextMessageContent(aFilm.toSimple('Día {0} de novembro'.format(day)), parse_mode='HTML'),
+                    tb.types.InputTextMessageContent(messageToSend, parse_mode='HTML'),
+                    reply_markup=None,
+                    url=aFilm.url,
+                    hide_url=True,
+                    description=theSession.time + " - " + theSession.place + "\n" + aFilm.synopsis,
+                    thumb_url=aFilm.poster,
+                    thumb_width=640,
+                    thumb_height=640)
+                    )
+        bot.answer_inline_query(inline_query.id, resultados)
+    except Exception as e:
+        print("ERRO: {0}".format(e))
 on_start('activeSessions')
 
-bot.polling()
+#bot.polling()
+bot.polling(none_stop=False)
