@@ -27,12 +27,14 @@ _ = t.gettext
 
 bot = tb.TeleBot(TOKEN)
 
+#if not os.path.exists('cineuropa2017.log'):
+
+
 def on_start(aFilename):
     try:
         print("on_start()")
 
-        if not os.path.exists('cineuropa2017.log'):
-            logging.basicConfig(filename='cineuropa2017.log',level=logging.INFO,
+        logging.basicConfig(filename='cineuropa2017.log',level=logging.INFO,
             format='%(asctime)s:%(levelname)s:%(message)s')
 
         logging.info("Started")
@@ -48,7 +50,12 @@ def on_start(aFilename):
                     apologize_text = _("Hi {0}!, I'm sorry I have been out of \
 coverage for a while. Possibly updating something. Anyway, now I'm alive again! \
 Please count on me.").format(v)
-                    bot.send_message(k,apologize_text)
+                    update_text = _("Hi {0}!, Now you can try the Cineuropa2017Bot inline!!! \
+Write <b>@Cineuropa2017Bot</b> at the beginning of a message in any chat! \
+You will see a list of today's next films. Choose one to send detailed info about the film to the chat \
+or touch the image to navigate to Cineuropa site detailed info. Have fun!").format(v)
+                    #bot.send_message(k,apologize_text)
+                    bot.send_message(k,update_text, parse_mode='HTML')
     except Exception as e:
         print("Error on_start(): {0}".format(e))
 # Some functions taken from:
@@ -136,7 +143,7 @@ markup.add(itembtn1, itembtn2, itembtn3, itembtn4, itembtn5)
 def test_callback(call):
 
     #print(call)
-    print("FUNCTION: {0} : USER: {1}".format('test_callback',call.from_user.username))
+    #print("FUNCTION: {0} : USER: {1}".format('test_callback',call.from_user.username))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'test_callback()'))
 
     if call.data != "CANCEL":
@@ -178,13 +185,13 @@ def test_callback(call):
 # start
 @bot.message_handler(commands=['start','inicio'])
 def send_welcome(message):
-    '''This handlert shows a welcome message.'''
+    '''This handler shows a welcome message.'''
 
     #welcome_message = "{0} {1}. {2}".format(_("Hello"),message.from_user.first_name,_("Howdy!"))
     #bot.reply_to(message, welcome_message)
 
     chat_id = message.chat.id
-    print("FUNCTION: {0} : USER: {1}".format('send_welcome',chat_id))
+    #print("FUNCTION: {0} : USER: {1}".format('send_welcome',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'send_welcome()'))
 
     name_to_show = get_username_from_storage(chat_id)
@@ -202,7 +209,7 @@ def send_welcome(message):
 @bot.message_handler(regexp='/fid_.{6}')
 def filmDetail(message):
     '''This handlert shows the detailed film.'''
-    print("FUNCTION: {0} : USER: {1}".format('aFilm',message.chat.id))
+    #print("FUNCTION: {0} : USER: {1}".format('aFilm',message.chat.id))
     chat_id = message.chat.id
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'filmDetail()'))
 
@@ -250,7 +257,7 @@ def command_help(message):
     Display the commands and what are they intended for.
     '''
     chat_id = message.chat.id
-    print("FUNCTION: {0} : USER: {1}".format('command_help',chat_id))
+    #print("FUNCTION: {0} : USER: {1}".format('command_help',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'help()'))
 
     help_text = _('Unofficial bot for Cineuropa#31 film festival (2017).')
@@ -276,8 +283,9 @@ def command_today(message):
     '''
 
     chat_id = message.chat.id
-    print("FUNCTION: {0} : USER: {1}".format('command_today',chat_id))
+    #print("FUNCTION: {0} : USER: {1}".format('command_today',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_today()'))
+
     day = datetime.date.today().day
     films = load_from_JSON()
 
@@ -339,7 +347,7 @@ def command_day(message):
     '''
     chat_id = message.chat.id
 
-    print("FUNCTION: {0} : USER: {1}".format('command_day',chat_id))
+    #print("FUNCTION: {0} : USER: {1}".format('command_day',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_day()'))
 
     if len(message.text.split(" ")) > 1:
@@ -372,7 +380,7 @@ def command_top(message):
     Show n top rated films.
     '''
     chat_id = message.chat.id
-    print("FUNCTION: {0} : USER: {1}".format('command_top',chat_id))
+    #print("FUNCTION: {0} : USER: {1}".format('command_top',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_top()'))
 
     if len(message.text.split(" ")) > 1:
@@ -396,7 +404,7 @@ def command_top10(message):
     Show top 10 rated films.
     '''
     chat_id = message.chat.id
-    print("FUNCTION: {0} : USER: {1}".format('command_top10',chat_id))
+    #print("FUNCTION: {0} : USER: {1}".format('command_top10',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_top10()'))
 
     if len(message.text.split(" ")) == 1:
@@ -415,7 +423,7 @@ def command_top10(message):
 def command_myrates(message):
     '''Show user's rates'''
     chat_id = message.chat.id
-    print("FUNCTION: {0} : USER: {1}".format('command_myrates',chat_id))
+    #print("FUNCTION: {0} : USER: {1}".format('command_myrates',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_myrates()'))
 
     if len(message.text.split(" ")) == 1:
@@ -443,8 +451,9 @@ def command_myrates(message):
 def command_myratedfilms(message):
     '''Show user's rated films'''
     chat_id = message.chat.id
-    print("FUNCTION: {0} : USER: {1}".format('command_myratedfilms',chat_id))
+    #print("FUNCTION: {0} : USER: {1}".format('command_myratedfilms',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_myratedfilms()'))
+
     if len(message.text.split(" ")) == 1:
         sessions = load_from_JSON()
         sortedList = sorted([x for x in sessions if chat_id in [y[0] for y in x.rates]], key = lambda x: x.rate, reverse=True)
@@ -464,7 +473,7 @@ def command_myratedfilms(message):
 def command_search(message):
     '''Search in film title'''
     chat_id = message.chat.id
-    print("FUNCTION: {0} : USER: {1}".format('command_myvotes',chat_id))
+    #print("FUNCTION: {0} : USER: {1}".format('command_myvotes',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_myvotes()'))
 
     if len(message.text.split(" ")) > 1:
@@ -496,8 +505,44 @@ def command_search(message):
     else:
         bot.send_message(chat_id, _("Invalid command"))
 
+@bot.message_handler(commands=['mystats','misestadisticas','asmiñasestatisticas'])
+def command_mystats(message):
+    '''Show user statistics'''
+    chat_id = message.chat.id
+
+    #print("FUNCTION: {0} : USER: {1}".format('command_mystats',chat_id))
+    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_mystats()'))
+
+    films = load_from_JSON()
+    myfilms = []
+    for film in films:
+        for rate in film.rates:
+            if rate[0] == chat_id:
+                myfilms.append((film.id,film.title,rate[1]))
+
+    if len(myfilms) > 0:
+        mymax = 0.0
+        mymin = 10.0
+        mysum = 0.0
+        for myfilm in myfilms:
+            if float(myfilm[2]) > mymax:
+                mymax = float(myfilm[2])
+            if float(myfilm[2]) < mymin:
+                mymin = float(myfilm[2])
+            mysum += float(myfilm[2])
+        myavg =  mysum/len(myfilms)
+        statsText =  "<b>***** My stats *****</b>\n<b>Films rated:</b> {0}\n<b>Max rating:</b> " \
+        "{1}\n<b>Min rating:</b> {2}\n<b>Average rating:</b> {3}".format(len(myfilms),
+        mymax, mymin, myavg)
+    else:
+        statsText = "No films rated."
+    bot.send_message(chat_id, statsText, parse_mode='HTML')
+
 @bot.inline_handler(lambda query: len(query.query) is 0)
 def default_query(inline_query):
+    #logging.info('QUERYID:{0} COMMAND:{1}'.format(inline_query.id,'default_query()'))
+    logging.info('ID:{0} COMMAND:{1}'.format(inline_query.from_user.id,'default_query()'))
+
     try:
         day = datetime.date.today().day
         hour = datetime.datetime.now().time().hour

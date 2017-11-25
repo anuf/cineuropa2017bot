@@ -98,14 +98,6 @@ def object2film(anObject):
     '''Convert an json object into a Film'''
     sessionsList = [object2session(x) for x in anObject['sessions']]
     ratesList = anObject['rates']
-<<<<<<< HEAD
-    return FilmObject(id=anObject['id'], title=anObject['title'],
-        synopsis=anObject['synopsis'],
-        critica_cineuropa=anObject['critica_cineuropa'],
-        year=anObject['year'],
-        director=anObject['director'], poster=anObject['poster'],
-        rate=anObject['rate'],rates=ratesList,
-=======
     return FilmObject(id=anObject['id'],
         title=anObject['title'],
         synopsis=anObject['synopsis'],
@@ -119,7 +111,6 @@ def object2film(anObject):
         gender = anObject['gender'],
         url = anObject['url'],
         countries = anObject['countries'],
->>>>>>> master
         sessions=sessionsList)
 
 
