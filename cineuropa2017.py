@@ -54,8 +54,11 @@ Please count on me.").format(v)
 Write <b>@Cineuropa2017Bot</b> at the beginning of a message in any chat! \
 You will see a list of today's next films. Choose one to send detailed info about the film to the chat \
 or touch the image to navigate to Cineuropa site detailed info. Have fun!").format(v)
+                    notification_text = _("Hi {0}!, Cineuropa 2017 film festival is ending soon. \
+Thanks for participating in this experiment. We hope to be back next year with more features. \
+Hurry up to rate your latest films and of course... have fun!").format(v)
                     #bot.send_message(k,apologize_text)
-                    bot.send_message(k,update_text, parse_mode='HTML')
+                    bot.send_message(k,notification_text, parse_mode='HTML')
     except Exception as e:
         print("Error on_start(): {0}".format(e))
 # Some functions taken from:
@@ -144,7 +147,7 @@ def test_callback(call):
 
     #print(call)
     #print("FUNCTION: {0} : USER: {1}".format('test_callback',call.from_user.username))
-    logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'test_callback()'))
+    logging.info('USER:{0} COMMAND:{1}'.format(call.from_user.id,'test_callback()'))
 
     if call.data != "CANCEL":
         print(call)

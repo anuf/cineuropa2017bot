@@ -20,3 +20,6 @@ cineuropa2017.log
 
 # backup (and temporary) files
 backup/
+
+# OMDB API KEY
+omdb_api_key.py
