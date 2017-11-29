@@ -28,7 +28,7 @@ _ = t.gettext
 bot = tb.TeleBot(TOKEN)
 
 #if not os.path.exists('cineuropa2017.log'):
-
+endtime = datetime.datetime(2017,11,29,0,0,0,0)
 
 def on_start(aFilename):
     try:
@@ -57,8 +57,18 @@ or touch the image to navigate to Cineuropa site detailed info. Have fun!").form
                     notification_text = _("Hi {0}!, Cineuropa 2017 film festival is ending soon. \
 Thanks for participating in this experiment. We hope to be back next year with more features. \
 Hurry up to rate your latest films and of course... have fun!").format(v)
-                    #bot.send_message(k,apologize_text)
-                    bot.send_message(k,notification_text, parse_mode='HTML')
+
+                    if datetime.datetime.today() > endtime:
+                        bot.send_message(k, _("<b>Hi {0}!</b>\nCineuropa 2017 film festival is over. \
+Thanks for participating in this experiment. We hope to be back next year with more features. \
+Rating has been already disabled but you can still interact for some days with the bot with simple commands like /myrates, /mystats or /top10.\n \
+Comments and suggestions are all welcome in utopica.ml@gmail.com.\n<b>Please stay tuned for upcomming updates.</b>"
+).format(v), parse_mode='html')
+                    else:
+                        #bot.send_message(k,apologize_text)
+                        #bot.send_message(k,notification_text, parse_mode='HTML')
+                        print('pass')
+                        pass
     except Exception as e:
         print("Error on_start(): {0}".format(e))
 # Some functions taken from:
@@ -99,36 +109,65 @@ def save_chat_id(chat_id, uname):
         print("ERROR save_chat_id(): {0}".format(e))
 
 if locale.getlocale()[0] == 'es_ES':
-    commands = {  # command description used in the "help" command ordered alphabetically
-                  'ayuda': _('Gives you information about the available commands'),
-                  'inicio': _('Get used to the bot'),
-                  'hoy': _('Shows films for the current day'),
-                  'mañana': _('Shows films for tomorrow'),
-                  'mejores n': _('Lists n top rated films'),
-                  'mejores10': _('Lists top 10 rated films'),
-                  'mispuntuaciones': _('Lists your rated films')
-
-    }
+    if datetime.datetime.today() > endtime:
+        commands = {  # command description used in the "help" command ordered alphabetically
+                      'ayuda': _('Gives you information about the available commands'),
+                      'mejores n': _('Lists n top rated films'),
+                      'mejores10': _('Lists top 10 rated films'),
+                      'mispuntuaciones': _('Lists your rated films'),
+                      'misestadisticas': _('Lists your stats')
+        }
+    else:
+        commands = {  # command description used in the "help" command ordered alphabetically
+                      'ayuda': _('Gives you information about the available commands'),
+                      'inicio': _('Get used to the bot'),
+                      'hoy': _('Shows films for the current day'),
+                      'mañana': _('Shows films for tomorrow'),
+                      'mejores n': _('Lists n top rated films'),
+                      'mejores10': _('Lists top 10 rated films'),
+                      'mispuntuaciones': _('Lists your rated films'),
+                      'misestadisticas': _('Lists your stats')
+        }
 elif locale.getlocale()[0] == 'gl_ES':
-    commands = {  # command description used in the "help" command ordered alphabetically
-                  'axuda': _('Gives you information about the available commands'),
-                  'inicio': _('Get used to the bot'),
-                  'hoxe': _('Shows films for the current day'),
-                  'mañá': _('Shows films for tomorrow'),
-                  'mellores n': _('Lists n top rated films'),
-                  'mellores10': _('Lists top 10 rated films'),
-                  'asmiñaspuntuacións': _('Lists your rated films')
-    }
+    if datetime.datetime.today() > endtime:
+        commands = {  # command description used in the "help" command ordered alphabetically
+                      'axuda': _('Gives you information about the available commands'),
+                      'mellores n': _('Lists n top rated films'),
+                      'mellores10': _('Lists top 10 rated films'),
+                      'asmiñaspuntuacións': _('Lists your rated films'),
+                      'asmiñasestatísticas': _('Lists your stats')
+        }
+    else:
+        commands = {  # command description used in the "help" command ordered alphabetically
+                      'axuda': _('Gives you information about the available commands'),
+                      'inicio': _('Get used to the bot'),
+                      'hoxe': _('Shows films for the current day'),
+                      'mañá': _('Shows films for tomorrow'),
+                      'mellores n': _('Lists n top rated films'),
+                      'mellores10': _('Lists top 10 rated films'),
+                      'asmiñaspuntuacións': _('Lists your rated films'),
+                      'asmiñasestatísticas': _('Lists your stats')
+        }
 else:
-    commands = {  # command description used in the "help" command ordered alphabetically
-                  'help': _('Gives you information about the available commands'),
-                  'start': _('Get used to the bot'),
-                  'today': _('Shows films for the current day'),
-                  'tomorrow': _('Shows films for tomorrow'),
-                  'top n': _('Lists n top rated films'),
-                  'top10': _('Lists top 10 rated films'),
-                  'myratings': _('Lists your rated films')
-    }
+    if datetime.datetime.today() > endtime:
+        commands = {  # command description used in the "help" command ordered alphabetically
+                      'help': _('Gives you information about the available commands'),
+                      'top n': _('Lists n top rated films'),
+                      'top10': _('Lists top 10 rated films'),
+                      'myrates': _('Lists your rated films'),
+                      'mystats': _('Lists your stats')
+        }
+    else:
+        commands = {  # command description used in the "help" command ordered alphabetically
+                      'help': _('Gives you information about the available commands'),
+                      'start': _('Get used to the bot'),
+                      'today': _('Shows films for the current day'),
+                      'tomorrow': _('Shows films for tomorrow'),
+                      'top n': _('Lists n top rated films'),
+                      'top10': _('Lists top 10 rated films'),
+                      'myrates': _('Lists your rated films'),
+                      'mystats': _('Lists your stats')
+        }
 
 markup = tb.types.ReplyKeyboardMarkup(row_width=2)
 itembtn1 = tb.types.KeyboardButton(_('/start'))
@@ -136,8 +175,13 @@ itembtn2 = tb.types.KeyboardButton(_('/help'))
 itembtn3 = tb.types.KeyboardButton(_('/today'))
 itembtn4 = tb.types.KeyboardButton(_('/tomorrow'))
 itembtn5 = tb.types.KeyboardButton(_('/top10'))
+itembtn6 = tb.types.KeyboardButton(_('/myrates'))
+itembtn7 = tb.types.KeyboardButton(_('/mystats'))
 
-markup.add(itembtn1, itembtn2, itembtn3, itembtn4, itembtn5)
+if datetime.datetime.today() > endtime:
+    markup.add(itembtn2, itembtn5, itembtn6, itembtn7)
+else:
+    markup.add(itembtn1, itembtn2, itembtn3, itembtn4, itembtn5)
 
 # proxy_url = "http://proxy.server:3128"
 # urllib3.ProxyManager(proxy_url=proxy_url, num_pools=3, maxsize=10, retries=False, timeout=30)
@@ -248,7 +292,10 @@ def filmDetail(message):
             tb.types.InlineKeyboardButton(_("Cancel"),callback_data = "CANCEL"))
 
         bot.reply_to(message, theFilm, parse_mode='HTML')
-        bot.send_photo(chat_id, thePoster, caption = caption, reply_markup=voteKeyboard)
+        if datetime.datetime.today() > endtime:
+            bot.send_photo(chat_id, thePoster)
+        else:
+            bot.send_photo(chat_id, thePoster, caption = caption, reply_markup=voteKeyboard)
 
     else:
         bot.reply_to(message, theFilm, parse_mode='HTML')
@@ -289,25 +336,28 @@ def command_today(message):
     #print("FUNCTION: {0} : USER: {1}".format('command_today',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_today()'))
 
-    day = datetime.date.today().day
-    films = load_from_JSON()
-
-    ulistaEventos = []
-    timeList = []
-    for film in films:
-        for y in film.sessions:
-            if str(day) in y.date.split(' '):
-                ulistaEventos.append(film)
-                timeList.append(y.time)
-
-    if len(ulistaEventos) == 0:
-        listaEventos = [_("No sessions today")]
+    if datetime.datetime.today() > endtime:
+        bot.send_message(chat_id,_('Cineuropa 2017 is over. Please try another command.'))
     else:
-        timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
-        listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+        day = datetime.date.today().day
+        films = load_from_JSON()
 
-    for ev in listaEventos:
-        bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
+        ulistaEventos = []
+        timeList = []
+        for film in films:
+            for y in film.sessions:
+                if str(day) in y.date.split(' '):
+                    ulistaEventos.append(film)
+                    timeList.append(y.time)
+
+        if len(ulistaEventos) == 0:
+            listaEventos = [_("No sessions today")]
+        else:
+            timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
+            listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+
+        for ev in listaEventos:
+            bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
 
 # tomorrow
 @bot.message_handler(commands=['tomorrow','mañana','mañá'])
@@ -319,27 +369,30 @@ def command_tomorrow(message):
     print("FUNCTION: {0} : USER: {1}".format('command_tomorrow',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_tomorrow()'))
 
-    tomorrow = datetime.date.today()+datetime.timedelta(days=1)
-    day = tomorrow.day
-
-    films = load_from_JSON()
-
-    ulistaEventos = []
-    timeList = []
-    for film in films:
-        for y in film.sessions:
-            if str(day) in y.date.split(' '):
-                ulistaEventos.append(film)
-                timeList.append(y.time)
-
-    if len(ulistaEventos) == 0:
-        listaEventos = [_("No sessions tomorrow")]
+    if datetime.datetime.today() > endtime:
+        bot.send_message(chat_id,_('Cineuropa 2017 is over. Please try another command.'))
     else:
-        timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
-        listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+        tomorrow = datetime.date.today()+datetime.timedelta(days=1)
+        day = tomorrow.day
 
-    for ev in listaEventos:
-        bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
+        films = load_from_JSON()
+
+        ulistaEventos = []
+        timeList = []
+        for film in films:
+            for y in film.sessions:
+                if str(day) in y.date.split(' '):
+                    ulistaEventos.append(film)
+                    timeList.append(y.time)
+
+        if len(ulistaEventos) == 0:
+            listaEventos = [_("No sessions tomorrow")]
+        else:
+            timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
+            listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+
+        for ev in listaEventos:
+            bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
 
 # any day
 @bot.message_handler(commands=['day','día'])
@@ -353,29 +406,32 @@ def command_day(message):
     #print("FUNCTION: {0} : USER: {1}".format('command_day',chat_id))
     logging.info('USER:{0} COMMAND:{1}'.format(chat_id,'command_day()'))
 
-    if len(message.text.split(" ")) > 1:
-        day = message.text.split(" ")[1]
-        films = load_from_JSON()
-
-        ulistaEventos = []
-        timeList = []
-        for film in films:
-            for y in film.sessions:
-                if str(day) in y.date.split(' '):
-                    ulistaEventos.append(film)
-                    timeList.append(y.time)
-
-        if len(ulistaEventos) == 0:
-            listaEventos = [_("No sessions this day")]
-        else:
-            timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
-            listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
-
-        for ev in listaEventos:
-            bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
-
+    if datetime.datetime.today() > endtime:
+        bot.send_message(chat_id,_('Cineuropa 2017 is over. Please try another command.'))
     else:
-        bot.send_message(chat_id, _("Invalid command"))
+        if len(message.text.split(" ")) > 1:
+            day = message.text.split(" ")[1]
+            films = load_from_JSON()
+
+            ulistaEventos = []
+            timeList = []
+            for film in films:
+                for y in film.sessions:
+                    if str(day) in y.date.split(' '):
+                        ulistaEventos.append(film)
+                        timeList.append(y.time)
+
+            if len(ulistaEventos) == 0:
+                listaEventos = [_("No sessions this day")]
+            else:
+                timeIndexes = sorted(range(len(timeList)), key=lambda k: timeList[k])
+                listaEventos = [ulistaEventos[tInd].toSimple('Día {0} de novembro'.format(day)) for tInd in timeIndexes]
+
+            for ev in listaEventos:
+                bot.send_message(chat_id, "\n********** {0} **********\n{1}".format(_("FILM"), ev), parse_mode='HTML')
+
+        else:
+            bot.send_message(chat_id, _("Invalid command"))
 
 @bot.message_handler(commands=['top','mejores','mellores'])
 def command_top(message):

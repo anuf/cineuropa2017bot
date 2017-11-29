@@ -61,3 +61,10 @@ There's a Telegram bot called **Cineuropa2017Bot** that's online. You can find i
 * [How to use gettext](https://pymotw.com/3/gettext/)
 * [Translating with gettext](https://www.icanlocalize.com/site/tutorials/how-to-translate-with-gettext-po-and-pot-files/)
 * [Poedit](https://poedit.net/)
+
+## Credits:
+### Main site
+* [Cineuropa](http://www.cineuropa.gal/2017)
+
+### Icons
+* [Iconfinder](https://www.iconfinder.com/icons/667356/camera_film_movie_shoot_vintage_icon#size=128)
