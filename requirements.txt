@@ -4,5 +4,5 @@ base32hex==1.0.2
 better_exceptions==0.1.8
 beautifulsoup4==4.6.0
 html2text==2017.10.4
-httplib2==0.10.3
+httplib2>=0.18.0
 lxml
